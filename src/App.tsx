@@ -57,6 +57,7 @@ import AssemblyMap from "./AssemblyMap";
 import Numeric from "./Numeric";
 import PrintMarkLegend from "./PrintMarkLegend";
 import LanguageMenu from "./LanguageMenu";
+import RoundedSelect from "./RoundedSelect";
 import { canPrintPositionHints } from "./positions";
 const CalibrationPanel = lazy(() => import("./CalibrationPanel"));
 const CropEditor = lazy(() => import("./CropEditor"));
@@ -733,18 +734,15 @@ export default function App() {
                 {t(locked ? "lock" : "noStretch")}
               </p>
               {!locked && (
-                <label className="field fit-field">
-                  {t("fit")}
-                  <select
+                <div className="field fit-field">
+                  <span>{t("fit")}</span>
+                  <RoundedSelect
+                    label={t("fit")}
                     value={fit}
-                    onChange={(e) =>
-                      setFit(e.target.value as "contain" | "cover")
-                    }
-                  >
-                    <option value="contain">{t("contain")}</option>
-                    <option value="cover">{t("cover")}</option>
-                  </select>
-                </label>
+                    onChange={(value) => setFit(value as "contain" | "cover")}
+                    options={[{ value: "contain", label: t("contain") }, { value: "cover", label: t("cover") }]}
+                  />
+                </div>
               )}
             </section>
             <section className="setting-section">
@@ -754,12 +752,12 @@ export default function App() {
                 <Printer size={17} />
               </h3>
               <div className="two-fields">
-                <label className="field">
-                  {t("paperSize")}
-                  <select
+                <div className="field">
+                  <span>{t("paperSize")}</span>
+                  <RoundedSelect
+                    label={t("paperSize")}
                     value={paper}
-                    onChange={(e) => {
-                      const value = e.target.value;
+                    onChange={(value) => {
                       setPaper(value);
                       if (value !== "custom") {
                         const [paperWidth, paperHeight] =
@@ -767,28 +765,22 @@ export default function App() {
                         patch({ paperWidth, paperHeight });
                       }
                     }}
-                  >
-                    {Object.entries(PAPERS).map(([key]) => (
-                      <option key={key}>{key}</option>
-                    ))}
-                    <option value="custom">{t("custom")}</option>
-                  </select>
-                </label>
-                <label className="field">
-                  {t("orientation")}
-                  <select
+                    options={[...Object.keys(PAPERS).map((key) => ({ value: key, label: key })), { value: "custom", label: t("custom") }]}
+                  />
+                </div>
+                <div className="field">
+                  <span>{t("orientation")}</span>
+                  <RoundedSelect
+                    label={t("orientation")}
                     value={settings.orientation}
-                    onChange={(e) =>
+                    onChange={(value) =>
                       patch({
-                        orientation: e.target.value as Settings["orientation"],
+                        orientation: value as Settings["orientation"],
                       })
                     }
-                  >
-                    <option value="auto">{t("auto")}</option>
-                    <option value="portrait">{t("portrait")}</option>
-                    <option value="landscape">{t("landscape")}</option>
-                  </select>
-                </label>
+                    options={(["auto", "portrait", "landscape"] as const).map((value) => ({ value, label: t(value) }))}
+                  />
+                </div>
               </div>
               {paper === "custom" && (
                 <div className="two-fields custom-fields">
@@ -827,21 +819,15 @@ export default function App() {
                 />
               </div>
               <p className="help">{t("marginHelp")}</p>
-              <label className="field alignment-field">
-                {t("alignment")}
-                <select
+              <div className="field alignment-field">
+                <span>{t("alignment")}</span>
+                <RoundedSelect
+                  label={t("alignment")}
                   value={settings.alignment}
-                  onChange={(e) =>
-                    patch({ alignment: e.target.value as Alignment })
-                  }
-                >
-                  {(["center", "start", "end"] as const).map((a) => (
-                    <option key={a} value={a}>
-                      {t(a)}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onChange={(value) => patch({ alignment: value as Alignment })}
+                  options={(["center", "start", "end"] as const).map((value) => ({ value, label: t(value) }))}
+                />
+              </div>
               <details className="profiles">
                 <summary>
                   {t("profile")}
@@ -866,16 +852,12 @@ export default function App() {
                   </button>
                   {profiles.length > 0 && (
                     <div className="profile-load">
-                      <select
-                        aria-label={t("loadProfile")}
+                      <RoundedSelect
+                        label={t("loadProfile")}
                         value={selectedProfile}
-                        onChange={(e) => applyProfile(e.target.value)}
-                      >
-                        <option value="">{t("loadProfile")}</option>
-                        {profiles.map((p) => (
-                          <option key={p.name}>{p.name}</option>
-                        ))}
-                      </select>
+                        onChange={applyProfile}
+                        options={[{ value: "", label: t("loadProfile") }, ...profiles.map((p) => ({ value: p.name, label: p.name }))]}
+                      />
                       <button
                         className="icon-button"
                         aria-label={t("deleteProfile")}

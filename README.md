@@ -6,6 +6,12 @@
 
 [繁體中文](#繁體中文) · [English](#english) · [日本語](#日本語)
 
+### v1.0.5
+
+- **繁中：** 紙張、方向、圖片配置、留白配置、設定檔與頁面跳轉等下拉選單，全部統一為圓角樣式。支援鍵盤、觸控、長清單捲動及視窗內選取，原有設定與 PDF 尺寸保持不變。
+- **English:** All remaining dropdowns now match the rounded language menu, including paper, orientation, fit, alignment, profiles and sheet navigation. Keyboard/touch support, scrollable long lists and dialog use preserve existing settings and PDF dimensions.
+- **日本語：** 用紙・向き・画像配置・余白配置・設定・ページ移動のドロップダウンを角丸に統一しました。キーボード、タッチ、長いリストのスクロール、ダイアログ内の操作に対応し、設定内容とPDF寸法は保持します。
+
 ### v1.0.4
 
 - **繁中：** 語言切換改為網站配色的圓角選單，支援鍵盤與觸控。英吋測試尺改為精確 4 in（101.6 mm），公式依測試尺基準計算；mm／cm 仍為100 mm／10 cm，舊校正設定相容。

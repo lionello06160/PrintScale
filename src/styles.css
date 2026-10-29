@@ -201,6 +201,67 @@ select {
   color: var(--green-dark);
   font-weight: 600;
 }
+.rounded-select {
+  width: 100%;
+  min-width: 0;
+}
+.rounded-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 9px 11px;
+  border: 1px solid #dfe5d7;
+  border-radius: 10px;
+  background: #fff;
+  color: #33462f;
+  font-size: 16px;
+  text-align: left;
+}
+.rounded-select-trigger > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rounded-select-trigger:hover,
+.rounded-select-trigger[aria-expanded="true"] {
+  border-color: #9bb59a;
+  background: #f8faf5;
+}
+.rounded-select-trigger[aria-expanded="true"] > svg {
+  transform: rotate(180deg);
+}
+.rounded-select-popup {
+  position: fixed;
+  right: auto;
+  top: auto;
+  z-index: 1000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.rounded-select-popup > button[aria-selected="true"] {
+  background: var(--soft);
+  color: var(--green-dark);
+  font-weight: 600;
+}
+.rounded-select-popup > button > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.alignment-field > .rounded-select {
+  max-width: 160px;
+}
+.profile-load > .rounded-select {
+  flex: 1;
+}
+.locator-controls > .rounded-select {
+  max-width: 70%;
+}
 .language-popup > button:hover {
   background: #f3f6ef;
 }

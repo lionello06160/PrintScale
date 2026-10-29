@@ -10,6 +10,7 @@ import { tilePosition } from "./positions";
 import type { Direction } from "./positions";
 import type { Plan } from "./geometry";
 import type { CopyKey } from "./i18n";
+import RoundedSelect from "./RoundedSelect";
 interface Props {
   plan: Plan;
   selected: number | null;
@@ -74,24 +75,13 @@ export default function AssemblyMap({
           <ArrowUp size={14} />
           {t("positionTop")}
         </span>
-        <label className="sr-only" htmlFor={id + "-select"}>
-          {t("positionJump")}
-        </label>
-        <select
+        <RoundedSelect
           id={id + "-select"}
-          aria-label={t("positionJump")}
-          value={selected ?? ""}
-          onChange={(e) =>
-            onSelect(e.target.value === "" ? null : Number(e.target.value))
-          }
-        >
-          <option value="">{t("positionOverview")}</option>
-          {plan.tiles.map((tile) => (
-            <option key={tile.index} value={tile.index}>
-              {label(tile.index)}
-            </option>
-          ))}
-        </select>
+          label={t("positionJump")}
+          value={selected === null ? "" : String(selected)}
+          onChange={(value) => onSelect(value === "" ? null : Number(value))}
+          options={[{ value: "", label: t("positionOverview") }, ...plan.tiles.map((tile) => ({ value: String(tile.index), label: label(tile.index), searchText: String(tile.index + 1) }))]}
+        />
       </div>
       <div ref={scroll} className="locator-scroll">
         <div

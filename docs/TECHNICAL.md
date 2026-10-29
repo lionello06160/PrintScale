@@ -120,3 +120,7 @@ The ruler, PDF ticks, filename, measurements and formula follow the finished-siz
 ## Language menu
 
 A rounded menu uses the existing green palette, selected-language checkmark and 44 px touch targets. It supports arrows, Home/End, Enter/Space, Escape with focus return, Tab/Shift+Tab, outside dismissal and persisted language selection. Resize closes the menu to avoid stale placement.
+
+## Consistent rounded dropdowns
+
+Paper size, orientation, image fitting, unused-space alignment, printer profiles, calibration profiles and sheet navigation share a rounded listbox styled like the language menu. All native select elements have been replaced while preserving option values and existing settings logic. Floating lists fit the viewport, flip upward when needed, follow their anchor during scrolling, and work inside the assembly dialog. Long lists scroll; arrows, Home/End, PageUp/PageDown, type-ahead, Enter/Space, Escape and Tab are supported. In a 192-sheet plan, typing 192 jumps to the corresponding sheet without truncating the list.

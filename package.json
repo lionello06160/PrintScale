@@ -1,7 +1,7 @@
 {
   "name": "printscale",
   "private": true,
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Browser-local poster tiling with precise physical PDF dimensions and three interface languages",
   "homepage": "https://printscale-studio.lionel0616.chatgpt.site/",
   "repository": {

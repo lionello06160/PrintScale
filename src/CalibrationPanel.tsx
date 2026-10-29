@@ -30,6 +30,7 @@ import { translate } from "./i18n";
 import type { CopyKey, Language } from "./i18n";
 import AssemblyMap from "./AssemblyMap";
 import Numeric from "./Numeric";
+import RoundedSelect from "./RoundedSelect";
 const PdfPreview = lazy(() => import("./PdfPreview"));
 interface Props {
   settings: Settings;
@@ -345,20 +346,15 @@ export default function CalibrationPanel({
           <h3>{t("calStep2")}</h3>
           {saved.profiles.length > 0 && (
             <div className="calibration-profile-select">
-              <label className="field">
-                {t("calLoad")}
-                <select
+              <div className="field">
+                <span>{t("calLoad")}</span>
+                <RoundedSelect
+                  label={t("calLoad")}
                   value={active?.id ?? ""}
-                  onChange={(e) => load(e.target.value)}
-                >
-                  <option value="">{t("calNone")}</option>
-                  {saved.profiles.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} · {length(p.paperWidth)} × {length(p.paperHeight)} {unit}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onChange={load}
+                  options={[{ value: "", label: t("calNone") }, ...saved.profiles.map((p) => ({ value: p.id, label: `${p.name} · ${length(p.paperWidth)} × ${length(p.paperHeight)} ${unit}` }))]}
+                />
+              </div>
               <button
                 className="icon-button"
                 aria-label={t("calDelete")}
