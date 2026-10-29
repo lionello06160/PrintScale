@@ -170,8 +170,8 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 64px 0 52px;
-  gap: 40px;
+  padding: 28px 0 24px;
+  gap: 28px;
 }
 .eyebrow {
   display: flex;
@@ -194,8 +194,14 @@ h1 {
   font-weight: 500;
   font-size: clamp(35px, 3.5vw, 48px);
   letter-spacing: -1.3px;
-  line-height: 1.48;
-  margin: 18px 0 15px;
+  line-height: 1.18;
+  margin: 12px 0 10px;
+}
+h1 br {
+  display: none;
+}
+h1 em::before {
+  content: " ";
 }
 h1 em {
   font-style: normal;
@@ -203,15 +209,15 @@ h1 em {
 }
 .hero p {
   font-size: 16px;
-  line-height: 1.95;
+  line-height: 1.7;
   color: var(--muted);
-  max-width: 510px;
+  max-width: 760px;
   letter-spacing: 0.15px;
 }
 .hero-meta {
   display: flex;
   gap: 23px;
-  margin-top: 24px;
+  margin-top: 12px;
   flex-wrap: wrap;
 }
 .hero-meta > span {
@@ -227,6 +233,9 @@ h1 em {
   width: 260px;
   height: 243px;
   margin-right: 46px;
+  margin-block: -38px;
+  transform: scale(0.68);
+  transform-origin: center right;
 }
 .art-poster {
   position: absolute;
@@ -1558,10 +1567,6 @@ dialog > .primary-button {
   .header {
     padding: 0 6vw;
   }
-  .hero {
-    padding-top: 70px;
-    padding-bottom: 60px;
-  }
 }
 @media (max-width: 1100px) {
   main {
@@ -1638,13 +1643,13 @@ dialog > .primary-button {
     gap: 16px;
   }
   .hero {
-    padding: 45px 0 32px;
+    padding: 24px 0 20px;
     gap: 15px;
   }
   .hero-art {
     width: 170px;
     height: 210px;
-    transform: scale(0.8);
+    transform: scale(0.6);
     transform-origin: center right;
     margin-left: -40px;
   }
@@ -1780,15 +1785,15 @@ dialog > .primary-button {
     font-size: 14px;
   }
   .hero {
-    padding: 34px 0 28px;
+    padding: 20px 0 18px;
     display: block;
     position: relative;
   }
   .hero h1 {
     font-size: 32px;
-    line-height: 1.5;
+    line-height: 1.25;
     letter-spacing: -0.8px;
-    margin-top: 15px;
+    margin-top: 10px;
   }
   .hero .eyebrow {
     font-size: 14px;
@@ -1797,9 +1802,9 @@ dialog > .primary-button {
   .hero p {
     font-size: 14px;
     max-width: 100%;
-    line-height: 1.9;
+    line-height: 1.7;
     padding-right: 0;
-    margin-top: 14px;
+    margin-top: 10px;
   }
   .hero-art {
     position: absolute;
@@ -1818,7 +1823,7 @@ dialog > .primary-button {
   }
   .hero-meta {
     gap: 9px 16px;
-    margin-top: 19px;
+    margin-top: 12px;
   }
   .hero-meta > span {
     font-size: 14px;

@@ -95,3 +95,10 @@ Inputs are capped at 40 MB, 40 megapixels and a 16,000 px edge; layouts at 200 p
 - Chromium checks across Traditional Chinese, English and Japanese at widths 320, 390, 768, 1024 and 1440 px show no horizontal document overflow or clipped visible controls. Dimension inputs measure 16 px and help text 14 px. The 320 px crop dialog and assembly guide remain usable. No browser errors or warnings were recorded.
 - Actual browser downloads for overlap and butt assembly each contain four explicit 210 × 297 mm MediaBoxes/CropBoxes, with identical image transforms. Original-size output remains one 350 × 466.7 mm page. pypdf independently verifies boxes, transforms and target paths; the rendered PDF and updated interface screenshots were visually inspected. Artifacts are under ignored `output/readability/`.
 - This update does not establish physical printer accuracy; the existing physical-device verification limits remain.
+
+## Compact introduction area
+
+- Reduced only the introductory hero spacing, headline line height and decorative illustration scale. The previously enlarged font sizes and the printing workflow remain unchanged.
+- At a 1200 px viewport in English, hero height decreases from 404.47 to 234.70 px (about 42%). The title remains 42 px and introductory copy 16 px.
+- Chromium checks in all three languages at 320, 390, 768, 1024, 1200 and 1440 px show no horizontal page overflow. Desktop and mobile screenshots were visually reviewed. Production build passes.
+- This is a CSS-only adjustment; PDF geometry, export code, controls and image processing are unchanged. Evidence is under ignored `output/compact-hero/`.
