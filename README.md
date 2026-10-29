@@ -6,6 +6,12 @@
 
 [繁體中文](#繁體中文) · [English](#english) · [日本語](#日本語)
 
+### v1.0.2
+
+- **繁中：** 頂部介紹區更扁，減少上下留白、縮小裝飾插圖，保留放大字級。1200 px 英文畫面高度減少約 42%；三語與手機排版均已檢查。
+- **English:** A more compact introduction with less vertical spacing and a smaller illustration, preserving readable font sizes. Hero height is about 42% lower in the 1200 px English view; all three languages and mobile layouts were checked.
+- **日本語：** 文字サイズを維持しながら上下の余白とイラストを小さくし、導入部分をコンパクトにしました。英語・幅1200 pxでは高さを約42%削減し、3言語とモバイル表示を確認しました。
+
 ### v1.0.1
 
 - **繁中：** 操作文字放大為 14–16 px、章節標題 18 px。PDF 改用粗黑裁切角線與圓靶十字，並附符號說明；紙張與成品實際尺寸維持不變。
