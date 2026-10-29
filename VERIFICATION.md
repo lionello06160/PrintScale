@@ -5,7 +5,7 @@ Test date: 2026-10-29, Asia/Taipei.
 ## Automated checks
 
 - TypeScript strict build and Vite production build pass.
-- Vitest: **64/64 tests passed**, covering the geometry engine and actual serialized PDFs.
+- Vitest: **67/67 tests passed**, covering the geometry engine and actual serialized PDFs.
 - Stock paper sweep: six sizes × three alignments × four overlap values × three poster sizes × two directions. Trim areas partition the finished poster exactly; both modes retain requested dimensions.
 - The PDF verifier rejects a changed CropBox and a changed image-size expectation. It inspects decoded content streams and does not trust app metadata.
 - Dependency audit: no known vulnerabilities after updating PDF.js and Vitest.
@@ -110,3 +110,11 @@ Inputs are capped at 40 MB, 40 megapixels and a 16,000 px edge; layouts at 200 p
 - Browser checks save 9.8/10.2 cm as canonical 98/102 mm, switch through in/mm/cm/in without modifying persisted profiles or factors, restore the profile after reload, and save exact equivalent inch measurements as 100/100 mm with 100% factors. Invalid inch measurements block Save and show an inch range.
 - All three languages × mm/cm/in × 320/390/768/1440 px have no horizontal overflow, clipped ruler/buttons or raw translation tokens. No browser errors or warnings. Existing local profile schema is preserved.
 - pypdf independently verifies browser-downloaded cm/in reference labels, exact 100 mm X/Y lines, A4 boxes and an additional A5 inch artifact. Rendered PDFs were visually checked, including endpoint labels that avoid the axis/border lines. The standard poster remains four A4 pages; the simulated 98/102 mm correction remains six A4 pages; the corrected guide uses cm measurements. Artifacts: ignored `output/calibration-units/`.
+
+## Rounded language menu and integer inch reference (v1.0.4)
+
+- Replaced only the header language select with a rounded custom menu using the existing colours, 16 px option text, selected checkmark and 44 px touch targets. Existing paper/profile selects are unchanged.
+- Browser verification covers Arrow keys, wrapping, Home/End, Enter/Space, Escape and focus return, Tab/Shift+Tab, outside dismissal, resize, rapid toggles, reduced motion, actual touch-event emulation and language persistence after reload. All three languages at 320/390/768/1024/1440 px keep the menu in the viewport without horizontal overflow. No console errors or warnings.
+- New inch rulers are exactly 4 in (101.6 mm), with 1/16 in ticks and matching PDF labels, formula and download names. mm/cm references remain 100 mm/10 cm. Measurements, limits and correction factors use the captured reference. Saved records retain referenceMm; legacy records default to 100 mm without changing old correction factors.
+- Three new tests verify true four-inch factors, old/new storage compatibility, unity correction and required printable area. Existing PDF unit tests now check exact 4 in axes and tick positions. Total: 67 tests.
+- Actual browser-downloaded ruler was independently checked with pypdf for exact 101.6 mm axes and X/Y 4 in labels, then rendered and visually reviewed. Entering 4/4 in saves 101.6/101.6 mm with referenceMm=101.6 and gives 100% factors. Both standard and corrected sample PDFs remain four explicit 210 × 297 mm A4 pages. Artifacts: ignored output/language-menu/.

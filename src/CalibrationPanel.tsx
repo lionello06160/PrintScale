@@ -16,6 +16,7 @@ import {
   CALIBRATION_KEY,
   calibratedPlan,
   calibrationScale,
+  calibrationReference,
   paperMatchesCalibration,
   parseCalibrations,
 } from "./calibration";
@@ -74,13 +75,10 @@ export default function CalibrationPanel({
   options,
   language,
 }: Props) {
-  const length = (mm: number) => fmt(fromMm(mm, unit), unit === "in" ? 8 : 4);
-  const referenceLength = `${unit === "in" ? "≈ " : ""}${length(100)} ${unit}`;
+  const length = (mm: number) => fmt(fromMm(mm, unit), 4);
+  const nextReferenceMm = calibrationReference(unit);
+  const referenceLength = `${length(nextReferenceMm)} ${unit}`;
   const copy = translate(language);
-  const t = (key: CopyKey) => copy(key)
-    .replaceAll("{length}", referenceLength)
-    .replaceAll("{range}", `${length(80)}–${length(120)} ${unit}`)
-    .replaceAll("{area}", `${length(114)} × ${length(140)} ${unit}`);
   const [saved, setSaved] = useState(readSaved);
   const initial = saved.profiles.find((p) => p.id === saved.activeId);
   const [active, setActive] = useState<Calibration | undefined>(initial),
@@ -88,12 +86,17 @@ export default function CalibrationPanel({
     [x, setX] = useState(initial ? String(initial.measuredX) : ""),
     [y, setY] = useState(initial ? String(initial.measuredY) : "");
   const [reference, setReference] = useState<
-    { width: number; height: number } | undefined
+    { width: number; height: number; referenceMm: number } | undefined
   >(
     initial
-      ? { width: initial.paperWidth, height: initial.paperHeight }
+      ? { width: initial.paperWidth, height: initial.paperHeight, referenceMm: initial.referenceMm ?? 100 }
       : undefined,
   );
+  const measurementReferenceMm = reference?.referenceMm ?? nextReferenceMm;
+  const t = (key: CopyKey) => copy(key)
+    .replaceAll("{length}", key === "calFormula" ? `${length(measurementReferenceMm)} ${unit}` : referenceLength)
+    .replaceAll("{range}", `${length(measurementReferenceMm * 0.8)}–${length(measurementReferenceMm * 1.2)} ${unit}`)
+    .replaceAll("{area}", `${length(nextReferenceMm + 14)} × ${length(nextReferenceMm + 40)} ${unit}`);
   const [message, setMessage] = useState<CopyKey>(),
     [busy, setBusy] = useState(false),
     [exportError, setExportError] = useState(false),
@@ -109,6 +112,7 @@ export default function CalibrationPanel({
     width: orientation === "portrait" ? w : h,
     height: orientation === "portrait" ? h : w,
     margin: settings.margin,
+    referenceMm: nextReferenceMm,
   };
   let testError: CopyKey | undefined;
   try {
@@ -120,7 +124,7 @@ export default function CalibrationPanel({
   let measurementError = false;
   if (x !== "" || y !== "") {
     try {
-      factor = calibrationScale(Number(x), Number(y));
+      factor = calibrationScale(Number(x), Number(y), measurementReferenceMm);
     } catch {
       measurementError = true;
     }
@@ -131,7 +135,8 @@ export default function CalibrationPanel({
     Number(x) === active.measuredX &&
     Number(y) === active.measuredY &&
     reference?.width === active.paperWidth &&
-    reference?.height === active.paperHeight;
+    reference?.height === active.paperHeight &&
+    reference?.referenceMm === (active.referenceMm ?? 100);
   const layout = useMemo(() => {
     if (!active) return {};
     try {
@@ -193,9 +198,9 @@ export default function CalibrationPanel({
       const bytes = await calibrationSheet(testPaper, unit);
       download(
         bytes,
-        `PrintScale-calibration-${length(testPaper.width)}x${length(testPaper.height)}${unit}-${length(100)}${unit}.pdf`,
+        `PrintScale-calibration-${length(testPaper.width)}x${length(testPaper.height)}${unit}-${length(nextReferenceMm)}${unit}.pdf`,
       );
-      setReference({ width: testPaper.width, height: testPaper.height });
+      setReference({ width: testPaper.width, height: testPaper.height, referenceMm: nextReferenceMm });
       setX("");
       setY("");
       setMessage("calNewReference");
@@ -219,6 +224,7 @@ export default function CalibrationPanel({
       name: name.trim(),
       measuredX: Number(x),
       measuredY: Number(y),
+      referenceMm: reference.referenceMm,
       paperWidth: reference.width,
       paperHeight: reference.height,
       updatedAt: new Date().toISOString(),
@@ -241,7 +247,7 @@ export default function CalibrationPanel({
     setX(c ? String(c.measuredX) : "");
     setY(c ? String(c.measuredY) : "");
     setReference(
-      c ? { width: c.paperWidth, height: c.paperHeight } : undefined,
+      c ? { width: c.paperWidth, height: c.paperHeight, referenceMm: c.referenceMm ?? 100 } : undefined,
     );
     setMessage(undefined);
   }
@@ -271,7 +277,7 @@ export default function CalibrationPanel({
     if (!active || !plan) return;
     download(
       new TextEncoder().encode(
-        `PrintScale | ${t("calApplied")}\n${active.name}\n${t("size")}: ${length(plan.width)} x ${length(plan.height)} ${unit}\n${t("outputPage")}: ${length(plan.paperWidth)} x ${length(plan.paperHeight)} ${unit}\n${plan.cols} x ${plan.rows} = ${plan.pages} ${t("sheets")}\n${t("calMeasured")}: X ${length(active.measuredX)} ${unit} / Y ${length(active.measuredY)} ${unit}\nX ${(10000 / active.measuredX).toFixed(4)}% / Y ${(10000 / active.measuredY).toFixed(4)}%\n${t("margin")}: ${length(plan.margin)} ${unit} | ${t("overlap")}: ${length(plan.overlap)} ${unit}\n\n${Array.from(
+        `PrintScale | ${t("calApplied")}\n${active.name}\n${t("size")}: ${length(plan.width)} x ${length(plan.height)} ${unit}\n${t("outputPage")}: ${length(plan.paperWidth)} x ${length(plan.paperHeight)} ${unit}\n${plan.cols} x ${plan.rows} = ${plan.pages} ${t("sheets")}\n${t("calReferenceLength")}: ${length(active.referenceMm ?? 100)} ${unit}\n${t("calMeasured")}: X ${length(active.measuredX)} ${unit} / Y ${length(active.measuredY)} ${unit}\nX ${((active.referenceMm ?? 100) * 100 / active.measuredX).toFixed(4)}% / Y ${((active.referenceMm ?? 100) * 100 / active.measuredY).toFixed(4)}%\n${t("margin")}: ${length(plan.margin)} ${unit} | ${t("overlap")}: ${length(plan.overlap)} ${unit}\n\n${Array.from(
           { length: plan.rows },
           (_, r) =>
             plan.tiles
@@ -380,8 +386,8 @@ export default function CalibrationPanel({
                 key={`${field.label}-${unit}`}
                 label={t(field.label)}
                 value={field.value === "" ? NaN : fromMm(Number(field.value), unit)}
-                min={fromMm(80, unit)}
-                max={fromMm(120, unit)}
+                min={fromMm(measurementReferenceMm * 0.8, unit)}
+                max={fromMm(measurementReferenceMm * 1.2, unit)}
                 suffix={unit}
                 precision={8}
                 disabled={!reference}
@@ -393,6 +399,7 @@ export default function CalibrationPanel({
             <p className="help">
               {t("calReference")}: {length(reference.width)} ×{" "}
               {length(reference.height)} {unit}
+              <br />{t("calReferenceLength")}: {length(reference.referenceMm)} {unit}
             </p>
           ) : (
             <p className="help">{t("calNeedRuler")}</p>
@@ -485,7 +492,7 @@ export default function CalibrationPanel({
               if (ready)
                 download(
                   result!.pdf.bytes,
-                  `PrintScale-CALIBRATED-${fmt(settings.width)}x${fmt(settings.height)}mm-X${fmt(10000 / active!.measuredX, 4)}-Y${fmt(10000 / active!.measuredY, 4)}-${plan!.pages}pages.pdf`,
+                  `PrintScale-CALIBRATED-${fmt(settings.width)}x${fmt(settings.height)}mm-X${fmt((active!.referenceMm ?? 100) * 100 / active!.measuredX, 4)}-Y${fmt((active!.referenceMm ?? 100) * 100 / active!.measuredY, 4)}-${plan!.pages}pages.pdf`,
                 );
             }}
           >

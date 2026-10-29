@@ -1,10 +1,11 @@
 import { makePlan } from "./geometry";
-import type { Plan, Settings } from "./geometry";
+import type { Plan, Settings, Unit } from "./geometry";
 export interface Calibration {
   id: string;
   name: string;
   measuredX: number;
   measuredY: number;
+  referenceMm?: number;
   paperWidth: number;
   paperHeight: number;
   updatedAt: string;
@@ -19,14 +20,17 @@ export interface CalibrationStore {
   activeId: string;
 }
 export const CALIBRATION_KEY = "printscale-calibrations-v1";
-export function calibrationScale(x: number, y: number): Scale {
-  if (![x, y].every((v) => Number.isFinite(v) && v >= 80 && v <= 120))
+export const calibrationReference = (unit: Unit) => unit === "in" ? 101.6 : 100;
+export function calibrationScale(x: number, y: number, referenceMm = 100): Scale {
+  if (![100, 101.6].includes(referenceMm) ||
+    ![x, y].every((v) => Number.isFinite(v) && v >= referenceMm * 0.8 - 1e-9 && v <= referenceMm * 1.2 + 1e-9))
     throw new Error("calMeasurementError");
-  return { x: 100 / x, y: 100 / y };
+  return { x: referenceMm / x, y: referenceMm / y };
 }
 export function validCalibration(v: unknown): v is Calibration {
   if (!v || typeof v !== "object") return false;
   const c = v as Calibration;
+  const referenceMm = c.referenceMm ?? 100;
   return (
     typeof c.id === "string" &&
     c.id.length > 0 &&
@@ -35,8 +39,9 @@ export function validCalibration(v: unknown): v is Calibration {
     c.name.length <= 60 &&
     typeof c.updatedAt === "string" &&
     Number.isFinite(Date.parse(c.updatedAt)) &&
+    [100, 101.6].includes(referenceMm) &&
     [c.measuredX, c.measuredY].every(
-      (n) => Number.isFinite(n) && n >= 80 && n <= 120,
+      (n) => Number.isFinite(n) && n >= referenceMm * 0.8 - 1e-9 && n <= referenceMm * 1.2 + 1e-9,
     ) &&
     [c.paperWidth, c.paperHeight].every(
       (n) => Number.isFinite(n) && n >= 1 && n <= 5080,
@@ -84,7 +89,7 @@ export function calibratedPlan(s: Settings, c: Calibration): Plan {
   return makePlan(
     s,
     c.paperWidth <= c.paperHeight ? "portrait" : "landscape",
-    calibrationScale(c.measuredX, c.measuredY),
+    calibrationScale(c.measuredX, c.measuredY, c.referenceMm),
   );
 }
 
@@ -92,17 +97,20 @@ export interface TestPaper {
   width: number;
   height: number;
   margin: number;
+  referenceMm?: number;
 }
 export function checkTestPaper(p: TestPaper) {
+  const referenceMm = p.referenceMm ?? 100;
   if (
+    ![100, 101.6].includes(referenceMm) ||
     ![p.width, p.height, p.margin].every(Number.isFinite) ||
     p.width < 1 ||
     p.height < 1 ||
     p.width > 5080 ||
     p.height > 5080 ||
     p.margin < 0 ||
-    p.width - 2 * p.margin < 114 ||
-    p.height - 2 * p.margin < 140
+    p.width - 2 * p.margin < referenceMm + 14 ||
+    p.height - 2 * p.margin < referenceMm + 40
   )
     throw new Error("calPaperTooSmall");
 }

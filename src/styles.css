@@ -146,20 +146,68 @@ select {
   color: #55705f;
 }
 .language {
+  position: relative;
+  z-index: 50;
+  flex-shrink: 0;
+}
+.language-trigger {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-.language select {
-  border: 0;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   background: transparent;
-  background-image: none;
   font-size: 16px;
-  padding: 6px 0 !important;
-  cursor: pointer;
+  line-height: 1.3;
+  padding: 9px 12px;
+  white-space: nowrap;
 }
-.language > svg:last-child {
-  margin-left: -3px;
+.language-trigger:hover,
+.language-trigger[aria-expanded="true"] {
+  background: var(--soft);
+  border-color: #c9d7c5;
+}
+.language-trigger[aria-expanded="true"] .language-chevron {
+  transform: rotate(180deg);
+}
+.language-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 184px;
+  max-width: calc(100vw - 32px);
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #d7e0cf;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px #193f341f;
+}
+.language-popup > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+}
+.language-popup > button[aria-checked="true"] {
+  background: var(--soft);
+  color: var(--green-dark);
+  font-weight: 600;
+}
+.language-popup > button:hover {
+  background: #f3f6ef;
+}
+.language-popup > button:focus-visible {
+  outline: 2px solid #72947b;
+  outline-offset: -2px;
+  background: var(--soft);
 }
 main {
   max-width: 1240px;
@@ -1781,7 +1829,7 @@ dialog > .primary-button {
   .brand-dot {
     margin-top: 5px;
   }
-  .language select {
+  .language-trigger {
     font-size: 14px;
   }
   .hero {
@@ -3110,6 +3158,5 @@ main { max-width: 1380px; }
   .steps > div { flex-basis: 100%; align-items: center; }
   .brand { font-size: 20px; }
   .header { gap: 8px; }
-  .language { gap: 3px; }
-  .language select { font-size: 14px; }
+  .language-trigger { gap: 6px; padding-inline: 8px; font-size: 14px; }
 }

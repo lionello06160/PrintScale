@@ -11,7 +11,6 @@ import {
   Expand,
   FileImage,
   FileText,
-  Globe2,
   Grid2X2,
   Leaf,
   LoaderCircle,
@@ -57,6 +56,7 @@ import type { View } from "./PdfPreview";
 import AssemblyMap from "./AssemblyMap";
 import Numeric from "./Numeric";
 import PrintMarkLegend from "./PrintMarkLegend";
+import LanguageMenu from "./LanguageMenu";
 import { canPrintPositionHints } from "./positions";
 const CalibrationPanel = lazy(() => import("./CalibrationPanel"));
 const CropEditor = lazy(() => import("./CropEditor"));
@@ -496,19 +496,7 @@ export default function App() {
             <ShieldCheck size={15} />
             {t("private")}
           </span>
-          <label className="language">
-            <Globe2 size={16} />
-            <select
-              aria-label="Language"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as Language)}
-            >
-              <option value="zh-Hant">繁體中文</option>
-              <option value="en">English</option>
-              <option value="ja">日本語</option>
-            </select>
-            <ChevronDown size={12} />
-          </label>
+          <LanguageMenu value={language} onChange={setLanguage} />
         </div>
       </header>
       <main>

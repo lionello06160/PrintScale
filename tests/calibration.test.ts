@@ -7,6 +7,8 @@ import {
 } from "pdf-lib";
 import {
   calibrationScale,
+  calibrationReference,
+  checkTestPaper,
   calibratedPlan,
   parseCalibrations,
   paperMatchesCalibration,
@@ -63,6 +65,29 @@ function stream(doc: PDFDocument, index = 0) {
     .join("\n");
 }
 describe("printer measurement and storage", () => {
+  it("uses a true four-inch reference and the matching correction factors", () => {
+    expect(calibrationReference("in")).toBe(101.6);
+    expect(calibrationReference("cm")).toBe(100);
+    expect(calibrationScale(101.6, 101.6, 101.6)).toEqual({ x: 1, y: 1 });
+    const scale = calibrationScale(3.92 * 25.4, 4.08 * 25.4, 101.6);
+    expect(scale.x).toBeCloseTo(4 / 3.92, 12);
+    expect(scale.y).toBeCloseTo(4 / 4.08, 12);
+    expect(() => calibrationScale(3 * 25.4, 101.6, 101.6)).toThrow();
+  });
+  it("keeps legacy profiles at 100 mm and round-trips new 4 in profiles", () => {
+    const inch = { ...record, id: "inch", referenceMm: 101.6, measuredX: 101.6, measuredY: 101.6 };
+    const store = parseCalibrations(JSON.stringify({ version: 1, profiles: [record, inch], activeId: "inch" }));
+    expect(store.profiles).toEqual([record, inch]);
+    expect(calibratedPlan(settings, store.profiles[0]).calibration).toEqual(calibrationScale(98, 102));
+    expect(calibratedPlan(settings, store.profiles[1]).calibration).toEqual({ x: 1, y: 1 });
+    expect(calibratedPlan(settings, store.profiles[1]).pages).toBe(4);
+    expect(parseCalibrations(JSON.stringify({ version: 1, profiles: [{...inch,referenceMm:4}],activeId:"inch" })).profiles).toEqual([]);
+  });
+  it("requires enough printable space for the longer four-inch ruler", () => {
+    expect(() => checkTestPaper({ width: 114, height: 140, margin: 0 })).not.toThrow();
+    expect(() => checkTestPaper({ width: 114, height: 140, margin: 0, referenceMm: 101.6 })).toThrow();
+    expect(() => checkTestPaper({ width: 148, height: 210, margin: 15, referenceMm: 101.6 })).not.toThrow();
+  });
   it("uses the inverse measured scale independently without premature rounding", () => {
     const f = calibrationScale(98, 102);
     expect(f.x).toBe(100 / 98);
@@ -170,25 +195,25 @@ describe("calibrated tiling", () => {
   });
 });
 describe("calibration PDF artifacts", () => {
-  it.each(["cm", "in"] as const)("labels the %s ruler in the selected unit without changing its physical reference", async (unit) => {
-    const paper = { width: 148, height: 210, margin: 15 };
+  it.each(["cm", "in"] as const)("prints the exact %s reference and matching native ticks", async (unit) => {
+    const paper = { width: 148, height: 210, margin: 15, referenceMm: calibrationReference(unit) };
     const bytes = await calibrationSheet(paper, unit);
     await expect(verifyCalibrationSheet(bytes, paper)).resolves.toBeUndefined();
     const doc = await PDFDocument.load(bytes), text = stream(doc);
     const words = [...text.matchAll(/<([0-9A-Fa-f]+)> Tj/g)]
       .map((m) => Buffer.from(m[1], "hex").toString("latin1")).join("\n");
-    const endpoint = unit === "cm" ? "10 cm" : "~3.93700787 in";
+    const endpoint = unit === "cm" ? "10 cm" : "4 in";
     expect(words).toContain(`X - ${endpoint}`);
     expect(words).toContain(`Y - ${endpoint}`);
     expect(doc.getPage(0).getWidth() / PT).toBe(148);
     expect(doc.getPage(0).getHeight() / PT).toBe(210);
     if (unit === "in") {
       // Verify a real 1/16-inch tick rather than merely relabelling mm ticks.
-      const x = (paper.width - 100) / 2, y = (paper.height - 100) / 2;
+      const x = (paper.width - 101.6) / 2, y = (paper.height - 101.6) / 2;
       const spans = [...text.matchAll(/([-+\d.eE]+) ([-+\d.eE]+) m\s*([-+\d.eE]+) ([-+\d.eE]+) l/g)]
         .map((m) => m.slice(1).map((n) => Number(n) / PT));
       expect(spans.some((v) => v.every((n,i) => Math.abs(n-[x+25.4/16,y,x+25.4/16,y+0.8][i])<1e-8))).toBe(true);
-      expect(words).toContain("1/16 in ticks; final tick is exact 100 mm.");
+      expect(words).toContain("1/16 in ticks; measure the full 4 in reference.");
     }
   });
   it("exports an uncompensated 100 mm X and Y ruler on exact A4", async () => {

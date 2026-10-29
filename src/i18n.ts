@@ -93,6 +93,7 @@ const copy = {
     "定規には補正を適用しません。0から{length}の目盛り間を測定してください。",
   ],
   calReference: ["量測用紙", "Measured paper", "測定した用紙"],
+  calReferenceLength: ["量測尺基準", "Measured ruler reference", "測定した定規の基準長"],
   calName: [
     "印表機／校正設定名稱",
     "Printer / calibration name",

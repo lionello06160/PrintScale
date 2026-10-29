@@ -67,9 +67,9 @@ The specified acceptance case is **350 × 466.7 mm**, **A4**, **15 mm margins** 
 
 ## Printer calibration
 
-The optional calibration panel prints an **uncompensated** 100 mm X/Y ruler, accepts separately measured lengths, and stores up to 20 named calibration profiles locally under `printscale-calibrations-v1`. Existing paper profiles remain compatible. The factors are computed at full precision as `kx = 100 / measuredX` and `ky = 100 / measuredY`; only displayed percentages are rounded. Measurements must be 80–120 mm. Larger discrepancies require checking 100% printing, orientation and measurement before applying compensation.
+The optional calibration panel prints an **uncompensated** X/Y ruler (100 mm / 10 cm / 4 in), accepts separately measured lengths, and stores up to 20 named calibration profiles locally under `printscale-calibrations-v1`. Existing paper profiles remain compatible. The factors are computed at full precision as `kx = referenceMm / measuredX` and `ky = referenceMm / measuredY`; only displayed percentages are rounded. Measurements must be within 80–120% of the reference (80–120 mm, or 3.2–4.8 in for the 4 in ruler). Larger discrepancies require checking 100% printing, orientation and measurement before applying compensation.
 
-The reference PDF uses the current paper and orientation and needs at least 114 × 140 mm of printable area. It contains exact 100 mm vector lines regardless of any saved calibration. Paper and explicit orientation must match the measured profile; automatic orientation for corrected output preserves the measured orientation. Changes to printer drivers, paper handling or print settings require fresh physical measurements.
+The reference PDF uses the current paper and orientation and needs at least 114 × 140 mm of printable area (115.6 × 141.6 mm for the 4 in ruler). It contains exact 100 mm or 101.6 mm vector lines according to the selected ruler, regardless of any saved calibration. Paper and explicit orientation must match the measured profile; automatic orientation for corrected output preserves the measured orientation. Changes to printer drivers, paper handling or print settings require fresh physical measurements.
 
 Corrected output is a separate, visibly labelled tiled PDF with a separate assembly guide and actual PDF preview. The standard tiled PDF and original-size single-page PDF receive no calibration. The corrected PDF deliberately changes image coordinates in the inverse direction of the measured printer error. Paper MediaBox and CropBox remain unchanged. The same transform is applied to images, clipping, crop ticks, registration marks and page labels.
 
@@ -79,7 +79,7 @@ To avoid clipping, the engine recomputes the grid in logical millimetres using p
 
 ## Verification
 
-`npm test` runs 64 geometry, graphical-crop, calibration, page-location and serialized-PDF tests. The geometry sweep includes all six stock papers, all three unused-space alignments, four overlap sizes and three poster sizes in both directions. Tests cover exact boundaries, unit conversions, image aspect preservation, invalid/oversized settings, alternate layouts, both assembly methods, actual PDF transforms and deliberate PDF box/matrix corruption.
+`npm test` runs 67 geometry, graphical-crop, calibration, page-location and serialized-PDF tests. The geometry sweep includes all six stock papers, all three unused-space alignments, four overlap sizes and three poster sizes in both directions. Tests cover exact boundaries, unit conversions, image aspect preservation, invalid/oversized settings, alternate layouts, both assembly methods, actual PDF transforms and deliberate PDF box/matrix corruption.
 
 Browser QA uses the Playwright CLI, with screenshots and downloaded PDFs under the ignored `output/` directory. See [VERIFICATION.md](../VERIFICATION.md) for tested paths and limitations. `tests/verify-export.py` independently checks the three browser-downloaded acceptance PDFs with pypdf. Run it after producing the PDFs in `output/pdf/`; it writes the measured result to `output/pdf/verification.json`.
 
@@ -115,4 +115,8 @@ Interface controls and helper text use 14–16 px, with 18 px section headings a
 
 ## Calibration units
 
-The ruler, its PDF tick labels, download name, measurement fields, validation range, paper dimensions, formula and corrected assembly guide follow the finished-size unit (mm/cm/in). The physical reference remains exactly 100 mm: 100 mm, 10 cm or approximately 3.93700787 in. Inch rulers use native 1/16-inch ticks and a separate exact endpoint. Changing units retains measurements and factors without mutating saved profiles; existing version-1 local profiles continue to store canonical millimetres. Measurement inputs display up to eight decimals to avoid coarse inch rounding; displayed rounding never changes the stored value.
+The ruler, PDF ticks, filename, measurements and formula follow the finished-size unit. New references are 100 mm, 10 cm or exactly 4 in (101.6 mm); inch ticks are spaced at 1/16 in. Each saved calibration retains its reference length. Profiles without referenceMm remain compatible with their original 100 mm reference. Switching display units never changes the captured reference or factor; downloading a new ruler starts a new measurement. Displayed dimensions are rounded, while internal measurements remain full precision.
+
+## Language menu
+
+A rounded menu uses the existing green palette, selected-language checkmark and 44 px touch targets. It supports arrows, Home/End, Enter/Space, Escape with focus return, Tab/Shift+Tab, outside dismissal and persisted language selection. Resize closes the menu to avoid stale placement.

@@ -6,6 +6,12 @@
 
 [繁體中文](#繁體中文) · [English](#english) · [日本語](#日本語)
 
+### v1.0.4
+
+- **繁中：** 語言切換改為網站配色的圓角選單，支援鍵盤與觸控。英吋測試尺改為精確 4 in（101.6 mm），公式依測試尺基準計算；mm／cm 仍為100 mm／10 cm，舊校正設定相容。
+- **English:** A rounded language menu matches the site and supports keyboard/touch input. New inch rulers use exactly 4 in (101.6 mm), with matching correction math. mm/cm rulers remain 100 mm/10 cm; legacy profiles retain their original reference.
+- **日本語：** 言語切替をサイトに合う角丸メニューに変更し、キーボードとタッチに対応しました。インチ定規は正確な4 in（101.6 mm）とし、その基準長で補正します。mm／cmは100 mm／10 cmのまま、既存の校正設定も保持します。
+
 ### v1.0.3
 
 - **繁中：** 測試尺、PDF 刻度與量測輸入跟隨成品的 mm／cm／in 選擇。實際尺長仍為 100 mm＝10 cm≈3.93700787 in，切換單位不改變校正係數。
