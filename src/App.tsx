@@ -58,6 +58,7 @@ import Numeric from "./Numeric";
 import PrintMarkLegend from "./PrintMarkLegend";
 import LanguageMenu from "./LanguageMenu";
 import RoundedSelect from "./RoundedSelect";
+import PrintReminder from "./PrintReminder";
 import { canPrintPositionHints } from "./positions";
 const CalibrationPanel = lazy(() => import("./CalibrationPanel"));
 const CropEditor = lazy(() => import("./CropEditor"));
@@ -139,6 +140,7 @@ export default function App() {
     [fileBusy, setFileBusy] = useState(false),
     [fileError, setFileError] = useState<CopyKey>(),
     [processError, setProcessError] = useState<CopyKey>();
+  const [printReminderOpen, setPrintReminderOpen] = useState(true);
   const [settings, setSettings] = useState<Settings>(DEFAULT),
     [unit, setUnit] = useState<Unit>("mm"),
     [locked, setLocked] = useState(true),
@@ -1286,17 +1288,22 @@ export default function App() {
             language={language}
           />
         </Suspense>
-        <aside className="print-notice">
-          <span className="notice-icon">
-            <Printer size={20} />
+        <aside className="print-notice" aria-labelledby="print-notice-title">
+          <span className="notice-icon" aria-hidden="true">
+            <Printer size={28} />
           </span>
-          <div>
-            <strong>{t("printTitle")}</strong>
+          <div className="print-notice-content">
+            <span className="print-notice-eyebrow">{t("printBefore")}</span>
+            <h2 id="print-notice-title">{t("printTitle")}</h2>
             <p>{t("printHelp")}</p>
+            <button className="print-notice-review" onClick={() => setPrintReminderOpen(true)}>
+              {t("printReminderReview")} <ArrowRight size={16} aria-hidden="true" />
+            </button>
           </div>
-          <span className="hundred">
-            100<span>%</span>
-          </span>
+          <div className="hundred" aria-hidden="true">
+            <span className="hundred-value">100<span>%</span></span>
+            <small>{t("actualSize")}</small>
+          </div>
         </aside>
       </main>
       <footer>
@@ -1311,6 +1318,7 @@ export default function App() {
         </button>
         <small>© {new Date().getFullYear()} PrintScale</small>
       </footer>
+      <PrintReminder open={printReminderOpen} onClose={() => setPrintReminderOpen(false)} t={t} />
       {cropOpen && source && (
         <Suspense fallback={null}>
           <CropEditor

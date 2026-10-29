@@ -124,3 +124,7 @@ A rounded menu uses the existing green palette, selected-language checkmark and 
 ## Consistent rounded dropdowns
 
 Paper size, orientation, image fitting, unused-space alignment, printer profiles, calibration profiles and sheet navigation share a rounded listbox styled like the language menu. All native select elements have been replaced while preserving option values and existing settings logic. Floating lists fit the viewport, flip upward when needed, follow their anchor during scrolling, and work inside the assembly dialog. Long lists scroll; arrows, Home/End, PageUp/PageDown, type-ahead, Enter/Space, Escape and Tab are supported. In a 192-sheet plan, typing 192 jumps to the corresponding sheet without truncating the list.
+
+## Print-size reminder
+
+Each fresh page load opens a localized reminder highlighting Actual size / 100%, disabling Fit and borderless enlargement, matching the PDF paper and testing one page. Dismiss it using the continue button, close button, Escape or backdrop; it does not reopen when changing settings or language during the same visit. The stronger warm-colour notice remains near the bottom, with a review button to reopen the reminder. The modal traps keyboard focus, restores it on close and keeps its actions visible on small screens. This reminder does not change PDF geometry or printer settings automatically.

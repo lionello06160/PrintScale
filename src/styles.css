@@ -1503,45 +1503,105 @@ h1 em {
 }
 .print-notice {
   margin: 21px 0 46px;
-  border: 1px solid #e6dfcd;
-  background: #f2eee3;
-  border-radius: 7px;
-  padding: 20px 23px;
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  color: #7d7257;
+  border: 2px solid #d8b578;
+  border-left: 6px solid var(--orange);
+  background: #fff6e3;
+  border-radius: 12px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  color: #3d412e;
 }
 .notice-icon {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  background: #e8e2d2;
-  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  background: #8e4b2c;
+  color: #fff;
+  border-radius: 14px;
   flex-shrink: 0;
 }
-.print-notice strong {
-  font-size: 16px;
-  font-weight: 500;
+.print-notice-content {
+  min-width: 0;
+}
+.print-notice-eyebrow {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8a4b28;
+  letter-spacing: 0.06em;
+  margin-bottom: 7px;
+}
+.print-notice h2 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #273d35;
 }
 .print-notice p {
-  font-size: 14px;
-  line-height: 1.9;
-  color: #978b6e;
-  margin-top: 6px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #5c4d36;
+  margin-top: 10px;
   max-width: 815px;
 }
 .hundred {
-  font-family: "Iowan Old Style", Georgia, serif;
-  font-size: 30px;
-  line-height: 1.1;
-  margin-left: auto;
-  color: #b8ae94;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 144px;
+  min-height: 120px;
+  padding: 16px;
+  background: #fffdf7;
+  border: 1px solid #d8b578;
+  border-radius: 12px;
+  color: var(--green-dark);
   white-space: nowrap;
 }
-.hundred span {
-  font-size: 16px;
+.hundred-value {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+.hundred-value > span {
+  font-size: 28px;
+  letter-spacing: 0;
+}
+.hundred small {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6c4e2d;
+}
+@media (max-width: 800px) {
+  .print-notice {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 16px;
+    padding: 22px;
+  }
+  .print-notice .notice-icon { width: 48px; height: 48px; }
+  .print-notice-content {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .hundred {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    flex-direction: row;
+    gap: 12px;
+    min-width: 0;
+    min-height: 64px;
+    padding: 12px 16px;
+  }
+  .hundred-value { font-size: 40px; }
+  .hundred-value > span { font-size: 22px; }
 }
 footer {
   max-width: 1156px;
@@ -1859,7 +1919,7 @@ dialog > .primary-button {
     gap: 7px;
   }
   .print-notice p {
-    font-size: 14px;
+    font-size: 16px;
   }
   footer {
     gap: 14px;
@@ -2175,24 +2235,26 @@ dialog > .primary-button {
   }
   .print-notice {
     padding: 18px 16px;
-    gap: 11px;
+    gap: 16px;
     margin-bottom: 30px;
   }
-  .print-notice strong {
-    font-size: 14px;
+  .print-notice h2 {
+    font-size: 22px;
   }
   .print-notice p {
-    font-size: 14px;
+    font-size: 15px;
   }
-  .hundred {
-    display: none;
+  .print-notice .hundred {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
   }
   .notice-icon {
-    width: 30px;
-    height: 30px;
+    width: 48px;
+    height: 48px;
   }
   .notice-icon svg {
-    width: 16px;
+    width: 24px;
   }
   footer {
     margin: 0 18px;
@@ -3221,3 +3283,75 @@ main { max-width: 1380px; }
   .header { gap: 8px; }
   .language-trigger { gap: 6px; padding-inline: 8px; font-size: 14px; }
 }
+
+.print-notice-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 0;
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #703c22;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.print-reminder {
+  padding: 0;
+  width: min(600px, calc(100% - 24px));
+  max-width: 600px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  border: 2px solid #d8b578;
+  border-radius: 16px;
+  background: #fffdf8;
+}
+.print-reminder::backdrop { background: #162f29b3; backdrop-filter: blur(4px); }
+.print-reminder-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #ead8b6;
+  background: #fff6e3;
+  color: #7c4226;
+  font-weight: 700;
+}
+.print-reminder-header > .icon-button { margin-left: auto; width: 44px; height: 44px; }
+.print-reminder-body { padding: 24px 28px; }
+.print-reminder-scale {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 20px;
+  background: #edf2eb;
+  color: #193f34;
+  border: 1px solid #c9d7c5;
+  border-radius: 12px;
+}
+.print-reminder-scale > span { font-size: 76px; font-weight: 750; line-height: 1; letter-spacing: -3px; }
+.print-reminder-scale > span > span { font-size: 36px; letter-spacing: 0; }
+.print-reminder-scale > small { font-size: 18px; font-weight: 600; }
+.print-reminder-body > h2 { font-size: 26px; line-height: 1.45; font-weight: 700; outline: none; }
+.print-reminder-body > p { font-size: 16px; line-height: 1.75; color: #5c4d36; margin-top: 12px; }
+.print-reminder-checks { padding: 0; margin: 20px 0 0; list-style: none; counter-reset: print-step; display: grid; gap: 10px; }
+.print-reminder-checks > li { counter-increment: print-step; display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: #fff; border: 1px solid #e8dfcd; border-radius: 9px; font-size: 16px; line-height: 1.6; }
+.print-reminder-checks > li::before { content: counter(print-step); display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; background: #fff0d8; color: #7c4226; font-weight: 700; }
+.print-reminder-actions { position: sticky; bottom: 0; padding: 16px 24px 20px; border-top: 1px solid #ead8b6; background: #fffdf8; }
+.print-reminder-actions > button { width: 100%; min-height: 50px; font-size: 17px; border-radius: 9px; }
+@media (max-width: 620px) {
+  .print-reminder-body { padding: 20px 18px; }
+  .print-reminder-body > h2 { font-size: 23px; }
+  .print-reminder-scale { gap: 12px; padding: 16px 12px; }
+  .print-reminder-scale > span { font-size: 64px; }
+  .print-reminder-scale > span > span { font-size: 30px; }
+  .print-reminder-scale > small { font-size: 16px; }
+  .print-reminder-actions { padding: 14px 18px 18px; }
+}
+@media print { .print-reminder, .print-reminder::backdrop { display: none !important; } }

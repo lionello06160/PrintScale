@@ -457,6 +457,18 @@ const copy = {
     "One last thing: choose “Actual size / 100%”.",
     "最後に「実際のサイズ / 100%」を選択。",
   ],
+  printBefore: ["列印前必看", "Before you print", "印刷前に確認"],
+  actualSize: ["實際大小", "Actual size", "実際のサイズ"],
+  printReminderIntro: [
+    "海報完成後，請先下載 PDF，再用 PDF 閱讀器列印，並確認下列設定，避免成品被自動縮放。",
+    "When your poster is ready, download the PDF and print from a PDF reader. Check these settings to keep the finished size accurate.",
+    "ポスターが完成したらPDFをダウンロードし、PDFリーダーから印刷してください。自動拡大・縮小を避けるため、次の設定を確認しましょう。",
+  ],
+  printReminderFit: ["關閉「符合頁面／縮放至紙張」", "Turn off “Fit to page” or “Scale to fit”", "「用紙に合わせる」を無効にする"],
+  printReminderBorderless: ["關閉「無邊界自動放大」", "Turn off automatic borderless enlargement", "フチなし印刷の自動拡大を無効にする"],
+  printReminderPaper: ["選擇與 PDF 相同的紙張尺寸，先試印一頁", "Match the PDF paper size and test one page first", "PDFと同じ用紙サイズを選び、まず1枚試し刷りする"],
+  printReminderContinue: ["我知道了，開始製作", "Got it, start creating", "確認して作成を始める"],
+  printReminderReview: ["再次查看列印提醒", "Review print settings", "印刷設定の注意をもう一度見る"],
   printHelp: [
     "先下載 PDF，再用 PDF 閱讀器列印。關閉「符合頁面」與無邊界自動放大，使用與 PDF 相同的紙張。印表機仍可能有機械誤差，先試印一頁。",
     "Download the PDF and print from a PDF reader. Turn off “Fit to page” and borderless enlargement. Use the matching paper size and test one page first; printers can introduce mechanical variation.",

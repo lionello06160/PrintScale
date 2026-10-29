@@ -6,6 +6,12 @@
 
 [繁體中文](#繁體中文) · [English](#english) · [日本語](#日本語)
 
+### v1.0.6
+
+- **繁中：** 開啟頁面先彈出「實際大小／100%」列印提醒；下方提示區同步加強，並可再次查看。保留三語、鍵盤關閉、焦點返回與手機捲動操作，PDF 尺寸維持不變。
+- **English:** A reminder now opens on page entry to highlight Actual size / 100%. The final-step notice is more prominent and can reopen the reminder. Three languages, keyboard dismissal, focus return and mobile scrolling preserve the existing workflow and PDF geometry.
+- **日本語：** ページを開くと「実際のサイズ／100%」の印刷リマインダーを表示します。下部の注意欄も強調し、再表示できます。3言語、キーボードで閉じる操作、フォーカス復帰、モバイルのスクロールに対応し、PDF寸法は変わりません。
+
 ### v1.0.5
 
 - **繁中：** 紙張、方向、圖片配置、留白配置、設定檔與頁面跳轉等下拉選單，全部統一為圓角樣式。支援鍵盤、觸控、長清單捲動及視窗內選取，原有設定與 PDF 尺寸保持不變。

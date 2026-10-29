@@ -127,3 +127,11 @@ Inputs are capped at 40 MB, 40 megapixels and a 16,000 px edge; layouts at 200 p
 - Keyboard tests cover arrows, Home/End, Enter, Escape without committing a draft, Tab/Shift+Tab, numeric type-ahead, and direct page 192 selection in an actual 192-page PDF preview. Also tested rapid toggles, reduced motion and actual touch Pointer Events via Chromium emulation.
 - Floating placement follows page scroll and works within dialog top layers, without being clipped by the studio/calibration panels. Popup lists scroll independently. Screenshots were visually reviewed; no console errors or warnings.
 - The browser-downloaded acceptance PDF still contains four pages, each with explicit 210 × 297 mm MediaBox/CropBox values, independently checked with pypdf. PDF generation and geometry code are unchanged. Existing 67 automated tests remain passing. Evidence is under ignored output/rounded-selects/.
+
+## Prominent print reminder on entry (v1.0.6)
+
+- The existing final-step notice keeps its original title/instructions, with a stronger warm background, accent border, dark 22–26 px heading, 15–16 px body copy and a large 100% badge visible on mobile.
+- Each new page load/refresh automatically opens a translated print reminder with 100% emphasis and three print-setting checks. Closing it leaves the workflow available. Settings/language changes do not reopen it; the notice review button opens it again. No skip flag is stored.
+- Browser checks cover initial open, continue/X/Escape/backdrop dismissal, forward/reverse Tab focus containment, return focus, manual reopening, saved language on reload and privacy-dialog compatibility. All three languages at 320×640, 390×844, 768×900, 1024×900 and 1440×1000 fit without horizontal overflow and retain a visible continue button.
+- Persistent notice and modal screenshots were visually reviewed on desktop/mobile. Reduced-motion operation works; the notice and modal are hidden in browser print media. No browser console errors or warnings were observed. PDF generation, geometry and calibration are unchanged.
+- Existing 67 automated checks remain passing. Evidence: ignored output/print-notice/.
