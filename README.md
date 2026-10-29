@@ -6,6 +6,12 @@
 
 [繁體中文](#繁體中文) · [English](#english) · [日本語](#日本語)
 
+### v1.0.1
+
+- **繁中：** 操作文字放大為 14–16 px、章節標題 18 px。PDF 改用粗黑裁切角線與圓靶十字，並附符號說明；紙張與成品實際尺寸維持不變。
+- **English:** Controls and helper text now use 14–16 px, with 18 px section headings. PDFs use bold black cut ticks and crosshair targets with a symbol legend; physical paper and poster sizes remain unchanged.
+- **日本語：** 操作・説明文字を 14–16 px、見出しを 18 px に拡大しました。PDF は太い黒の裁断線と丸い十字マークを使用し、凡例を追加しました。用紙と仕上がりの実寸は変わりません。
+
 <a id="繁體中文"></a>
 ## 繁體中文
 

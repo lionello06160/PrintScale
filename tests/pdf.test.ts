@@ -114,4 +114,39 @@ describe("serialized PDF evidence", () => {
     expect(a.bytes).not.toEqual(b.bytes);
     expect(a.pages).toBe(b.pages);
   });
+  it("adds black bullseye targets without changing image transforms or clips", async () => {
+    const p = makePlan(s, "portrait");
+    const read = async (registration: boolean) => {
+      const result = await exportPdf(png, p, { ...options, registration, pageNumbers: false });
+      const doc = await PDFDocument.load(result.bytes);
+      return doc.getPages().map((page) =>
+        (page.node.Contents() as PDFArray).asArray().map((ref) =>
+          new TextDecoder().decode(decodePDFRawStream(doc.context.lookup(ref) as PDFRawStream).decode()),
+        ).join("\n"),
+      );
+    };
+    const marked = await read(true), plain = await read(false);
+    marked.forEach((stream, i) => {
+      // Four margin targets per corner tile, four exact Bezier arcs per ring.
+      expect(stream.match(/ c\n/g)).toHaveLength(16);
+      expect(stream).toContain("0 0 0 RG");
+      expect(stream).toContain("0.85 w");
+      expect(stream.match(/[^\n]+ cm/g)).toEqual(plain[i].match(/[^\n]+ cm/g));
+      expect(stream.match(/[^\n]+ re\nW/g)).toEqual(plain[i].match(/[^\n]+ re\nW/g));
+      expect(plain[i].match(/ c\n/g)).toBeNull();
+    });
+  });
+  it("fits shortened cut ticks and targets at 4 mm margins, omitting targets below 4 mm", async () => {
+    for (const margin of [0, 3.9, 4, 15]) {
+      const p = makePlan({ ...s, margin }, "portrait");
+      const r = await exportPdf(png, p, { ...options, pageNumbers: false });
+      const doc = await PDFDocument.load(r.bytes);
+      const stream = (doc.getPage(0).node.Contents() as PDFArray).asArray().map((ref) =>
+        new TextDecoder().decode(decodePDFRawStream(doc.context.lookup(ref) as PDFRawStream).decode()),
+      ).join("\n");
+      expect((stream.match(/ c\n/g) ?? []).length).toBe(margin >= 4 ? 16 : 0);
+      expect(r.maxErrorMm).toBeLessThan(0.01);
+      if (margin === 4) expect(stream).toContain("0.85 w");
+    }
+  });
 });

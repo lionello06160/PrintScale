@@ -13,6 +13,11 @@ import {
   PDFRawStream,
   PDFArray,
   PDFNumber,
+  moveTo,
+  appendBezierCurve,
+  setLineWidth,
+  setStrokingColor,
+  stroke,
 } from "pdf-lib";
 import { PT, cutRect, imagePlacement, validatePlan } from "./geometry";
 import type { Plan, Assembly, Rect } from "./geometry";
@@ -123,19 +128,20 @@ export async function exportPdf(
       popGraphicsState(),
     );
     if (single) continue;
+    const markInk = rgb(0, 0, 0);
     const line = (
       x1: number,
       y1: number,
       x2: number,
       y2: number,
-      dashed = false,
+      thickness = 0.85,
+      color = markInk,
     ) =>
       page.drawLine({
         start: { x: x1 * PT, y: (ph - y1) * PT },
         end: { x: x2 * PT, y: (ph - y2) * PT },
-        thickness: 0.35,
-        color: ink,
-        ...(dashed ? { dashArray: [2, 2] } : {}),
+        thickness,
+        color,
       });
     const r = cutRect(plan, tile, options.assembly);
     const x1 = m + r.x - tile.source.x,
@@ -144,25 +150,50 @@ export async function exportPdf(
       y2 = y1 + r.height;
     if (options.cropMarks) {
       // Ticks extend into discarded material, never across the finished image.
-      const gap = 0.6,
-        len = 3;
+      const gap = 0.8,
+        len = 5;
       [
         [x1, y1, -1, -1],
         [x2, y1, 1, -1],
         [x1, y2, -1, 1],
         [x2, y2, 1, 1],
       ].forEach(([a, b, dx, dy]) => {
-        if (a + dx * (len + gap) >= 0 && a + dx * (len + gap) <= pw)
-          line(a + dx * gap, b, a + dx * (len + gap), b);
-        if (b + dy * (len + gap) >= 0 && b + dy * (len + gap) <= ph)
-          line(a, b + dy * gap, a, b + dy * (len + gap));
+        const horizontal = Math.min(len, (dx < 0 ? a : pw - a) - gap - 0.2),
+          vertical = Math.min(len, (dy < 0 ? b : ph - b) - gap - 0.2);
+        if (horizontal > 0.3)
+          line(a + dx * gap, b, a + dx * (horizontal + gap), b);
+        if (vertical > 0.3)
+          line(a, b + dy * gap, a, b + dy * (vertical + gap));
       });
     }
     if (options.registration && m >= 4 && plan.overlap > 0) {
       // Mark the SAME poster-coordinate seam on each adjacent page, outside the image.
       const cross = (a: number, b: number) => {
-        line(a - 1.5, b, a + 1.5, b);
-        line(a, b - 1.5, a, b + 1.5);
+        // A bullseye is distinguishable from cut ticks, including in monochrome.
+        // All paths use page coordinates: no extra image transforms are introduced.
+        const edgeClearance = Math.min(
+            ...[scale?.x ?? 1, scale?.y ?? 1].map((factor) => m / factor - m / 2),
+          ),
+          radius = Math.min(2.2, m / 2 - 0.6, edgeClearance - 0.2),
+          ring = radius * 0.72,
+          x = a * PT,
+          y = (ph - b) * PT,
+          r = ring * PT,
+          k = r * 0.5522847498;
+        page.pushOperators(
+          pushGraphicsState(),
+          setStrokingColor(markInk),
+          setLineWidth(0.85),
+          moveTo(x + r, y),
+          appendBezierCurve(x + r, y + k, x + k, y + r, x, y + r),
+          appendBezierCurve(x - k, y + r, x - r, y + k, x - r, y),
+          appendBezierCurve(x - r, y - k, x - k, y - r, x, y - r),
+          appendBezierCurve(x + k, y - r, x + r, y - k, x + r, y),
+          stroke(),
+          popGraphicsState(),
+        );
+        line(a - radius, b, a + radius, b);
+        line(a, b - radius, a, b + radius);
       };
       const sx = [
         tile.col ? tile.trim.x : null,

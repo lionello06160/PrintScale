@@ -56,6 +56,7 @@ import type { ExportOptions, PdfResult } from "./pdf";
 import type { View } from "./PdfPreview";
 import AssemblyMap from "./AssemblyMap";
 import Numeric from "./Numeric";
+import PrintMarkLegend from "./PrintMarkLegend";
 import { canPrintPositionHints } from "./positions";
 const CalibrationPanel = lazy(() => import("./CalibrationPanel"));
 const CropEditor = lazy(() => import("./CropEditor"));
@@ -455,7 +456,7 @@ export default function App() {
           .join("  "),
     ).join(
       "\n",
-    )}\n\n1. ${t("printHelp")}\n2. ${t("guide1")}\n3. ${t(assembly === "overlap" ? "guideOverlap" : "guideButt")}\n4. ${t("guide3")}\n\n${t("size")} ${fmt(p.width)} × ${fmt(p.height)} mm. 100%.`;
+    )}\n\n1. ${t("printHelp")}\n2. ${t("guide1")}\n3. ${t(assembly === "overlap" ? "guideOverlap" : "guideButt")}\n4. ${t("guide3")}\n\n${t("cutSymbol")}: ${t("cutSymbolHelp")}\n${t("registrationSymbol")}: ${t("registrationSymbolHelp")}\n\n${t("size")} ${fmt(p.width)} × ${fmt(p.height)} mm. 100%.`;
   }
   const modeCard = (m: Mode) => {
     const p = calculation[m];
@@ -1186,6 +1187,7 @@ export default function App() {
                   </label>
                 ))}
               </div>
+              <PrintMarkLegend t={t} />
               <p className="help position-pdf-help">{t("positionPdfHelp")}</p>
               {pageNumbers && plan && !canPrintPositionHints(plan) && (
                 <p className="warning compact">{t("positionMargin")}</p>
@@ -1399,6 +1401,7 @@ export default function App() {
                 onSelect={setPageIndex}
                 t={t}
               />
+              <PrintMarkLegend t={t} />
               <ol className="guide-steps">
                 <li>{t("printHelp")}</li>
                 <li>{t("guide1")}</li>

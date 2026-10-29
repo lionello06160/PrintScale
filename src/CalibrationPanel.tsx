@@ -271,7 +271,7 @@ export default function CalibrationPanel({
               .join(" "),
         ).join(
           "\n",
-        )}\n\n${t("calSameSettings")}\n\n${t("guide1")}\n\n${t(options.assembly === "overlap" ? "guideOverlap" : "guideButt")}\n\n${t("calPhysicalLimit")}`,
+        )}\n\n${t("calSameSettings")}\n\n${t("guide1")}\n\n${t(options.assembly === "overlap" ? "guideOverlap" : "guideButt")}\n\n${t("cutSymbol")}: ${t("cutSymbolHelp")}\n${t("registrationSymbol")}: ${t("registrationSymbolHelp")}\n\n${t("calPhysicalLimit")}`,
       ),
       "PrintScale-CALIBRATED-assembly.txt",
       "text/plain;charset=utf-8",

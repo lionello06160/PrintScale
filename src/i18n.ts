@@ -402,6 +402,18 @@ const copy = {
   marks: ["裁切線", "Crop marks", "トンボ"],
   registration: ["對位標記", "Registration marks", "位置合わせマーク"],
   numbers: ["頁碼", "Page numbers", "ページ番号"],
+  cutSymbol: ["粗角線＝裁切位置", "Bold ticks = cut position", "太い線＝裁断位置"],
+  cutSymbolHelp: [
+    "沿同一邊的兩個標記連線裁切；不用沿圓靶裁切。",
+    "Cut along the line between matching edge ticks, not the targets.",
+    "同じ辺の2つの線を結んで裁断します。丸い的では切りません。",
+  ],
+  registrationSymbol: ["圓靶十字＝對位位置", "Crosshair target = alignment", "丸い十字＝位置合わせ"],
+  registrationSymbolHelp: [
+    "相鄰紙張的圓靶中心對齊；標記位於白邊，不占成品。",
+    "Align target centres on neighbouring sheets. Marks stay in spare margins.",
+    "隣り合う用紙の的の中心を合わせます。マークは余白に配置します。",
+  ],
   marksWarning: [
     "邊界小於 4 mm，對位標記不輸出；小於 3 mm，頁碼不輸出。裁切標記可能不完整。",
     "Below 4 mm, registration marks are omitted; below 3 mm, page numbers are omitted. Crop marks may be incomplete.",

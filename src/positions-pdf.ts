@@ -29,7 +29,7 @@ export function drawPositionHints(
     page.drawLine({
       start: { x: x * PT, y: y * PT },
       end: { x: x2 * PT, y: y2 * PT },
-      thickness: 0.25,
+      thickness: 0.6,
       color: muted,
     });
   const max = m - 7,
@@ -58,7 +58,7 @@ export function drawPositionHints(
   line(ax, tip, ax - 1.2, tip - 1.8);
   line(ax, tip, ax + 1.2, tip - 1.8);
   const top = "TOP",
-    topSize = 4.5;
+    topSize = 7;
   page.drawText(top, {
     x: ax * PT - font.widthOfTextAtSize(top, topSize) / 2,
     y: (ph - m + 1) * PT,
@@ -68,7 +68,7 @@ export function drawPositionHints(
   });
   const text = `PAGE ${index + 1}/${plan.pages}  |  R${row + 1}/${plan.rows} C${col + 1}/${plan.cols}`;
   const size = Math.min(
-    8,
+    11,
     ((pw - 2 * m - 8) * PT) / font.widthOfTextAtSize(text, 1),
   );
   page.drawText(text, {

@@ -5,7 +5,7 @@ Test date: 2026-10-29, Asia/Taipei.
 ## Automated checks
 
 - TypeScript strict build and Vite production build pass.
-- Vitest: **60/60 tests passed**, covering the geometry engine and actual serialized PDFs.
+- Vitest: **62/62 tests passed**, covering the geometry engine and actual serialized PDFs.
 - Stock paper sweep: six sizes × three alignments × four overlap values × three poster sizes × two directions. Trim areas partition the finished poster exactly; both modes retain requested dimensions.
 - The PDF verifier rejects a changed CropBox and a changed image-size expectation. It inspects decoded content streams and does not trust app metadata.
 - Dependency audit: no known vulnerabilities after updating PDF.js and Vitest.
@@ -85,3 +85,13 @@ Inputs are capped at 40 MB, 40 megapixels and a 16,000 px edge; layouts at 200 p
 - The crop dialog was checked at 320, 390, 768 and 1280 px in Traditional Chinese, English and Japanese without horizontal overflow.
 - With finished-size ratio unlocked, applying a new crop left both output dimensions unchanged. Locked-ratio height changes are shown in the modal before Apply.
 - Images remain local. The existing PDF, calibration and assembly-position test suites still pass.
+
+## Readability and print-mark update (v1.0.1)
+
+- Interface helper text and controls formerly sized 7–13 px now use 14–16 px; primary section headings use 18 px and physical dimension inputs 16 px. Tablet/mobile layouts reflow to preserve readable text. Existing labels, colours and workflow are retained.
+- Cut ticks are black, 0.85 pt thick (previously 0.35 pt), up to 5 mm long, shortened to fit the page when margins are small. The cut coordinates are unchanged. Registration marks now use a 0.85 pt black circle with crosshairs, up to 4.4 mm across, in the existing spare-margin positions. Calibration limits their radius to fit physical page bounds.
+- Printed position labels increase from 8 to 11 pt and TOP from 4.5 to 7 pt where the existing margin requirements permit. The interface and assembly guides explain the two symbols in all three languages.
+- Two additional serialized-PDF tests verify bullseye paths, monochrome strokes, the unchanged image matrices/clips, and 0/3.9/4/15 mm margins. Existing calibration, tiling and position suites remain passing: 62 tests total.
+- Chromium checks across Traditional Chinese, English and Japanese at widths 320, 390, 768, 1024 and 1440 px show no horizontal document overflow or clipped visible controls. Dimension inputs measure 16 px and help text 14 px. The 320 px crop dialog and assembly guide remain usable. No browser errors or warnings were recorded.
+- Actual browser downloads for overlap and butt assembly each contain four explicit 210 × 297 mm MediaBoxes/CropBoxes, with identical image transforms. Original-size output remains one 350 × 466.7 mm page. pypdf independently verifies boxes, transforms and target paths; the rendered PDF and updated interface screenshots were visually inspected. Artifacts are under ignored `output/readability/`.
+- This update does not establish physical printer accuracy; the existing physical-device verification limits remain.

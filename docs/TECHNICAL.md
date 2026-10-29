@@ -79,7 +79,7 @@ To avoid clipping, the engine recomputes the grid in logical millimetres using p
 
 ## Verification
 
-`npm test` runs 60 geometry, graphical-crop, calibration, page-location and serialized-PDF tests. The geometry sweep includes all six stock papers, all three unused-space alignments, four overlap sizes and three poster sizes in both directions. Tests cover exact boundaries, unit conversions, image aspect preservation, invalid/oversized settings, alternate layouts, both assembly methods, actual PDF transforms and deliberate PDF box/matrix corruption.
+`npm test` runs 62 geometry, graphical-crop, calibration, page-location and serialized-PDF tests. The geometry sweep includes all six stock papers, all three unused-space alignments, four overlap sizes and three poster sizes in both directions. Tests cover exact boundaries, unit conversions, image aspect preservation, invalid/oversized settings, alternate layouts, both assembly methods, actual PDF transforms and deliberate PDF box/matrix corruption.
 
 Browser QA uses the Playwright CLI, with screenshots and downloaded PDFs under the ignored `output/` directory. See [VERIFICATION.md](../VERIFICATION.md) for tested paths and limitations. `tests/verify-export.py` independently checks the three browser-downloaded acceptance PDFs with pypdf. Run it after producing the PDFs in `output/pdf/`; it writes the measured result to `output/pdf/verification.json`.
 
@@ -108,3 +108,7 @@ Browser QA uses the Playwright CLI, with screenshots and downloaded PDFs under t
 - `src/App.tsx`: workflow, validated inputs, output invalidation, local profiles and downloads.
 
 Library references: [pdf-lib page boxes](https://pdf-lib.js.org/docs/api/classes/pdfpage), [PDF.js examples](https://mozilla.github.io/pdf.js/examples/).
+
+## Readability update
+
+Interface controls and helper text use 14–16 px, with 18 px section headings and responsive reflow. Cut ticks use black 0.85 pt strokes, up to 5 mm long; registration marks use distinct black crosshair targets up to 4.4 mm across. Spare-margin placement and physical poster/paper dimensions are preserved. A trilingual symbol legend appears beside the print options and in the assembly guide. Printed sheet-position text is also larger.
