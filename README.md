@@ -6,6 +6,12 @@
 
 [繁體中文](#繁體中文) · [English](#english) · [日本語](#日本語)
 
+### v1.0.3
+
+- **繁中：** 測試尺、PDF 刻度與量測輸入跟隨成品的 mm／cm／in 選擇。實際尺長仍為 100 mm＝10 cm≈3.93700787 in，切換單位不改變校正係數。
+- **English:** Ruler labels, PDF ticks and measurement inputs follow the selected mm/cm/in unit. The reference remains exactly 100 mm (10 cm / approximately 3.93700787 in); switching units preserves calibration factors.
+- **日本語：** 定規・PDF目盛り・実測値の単位を仕上がり寸法の mm／cm／in に連動させました。基準の実寸は100 mm（10 cm／約3.93700787 in）のまま、単位を切り替えても補正係数を保持します。
+
 ### v1.0.2
 
 - **繁中：** 頂部介紹區更扁，減少上下留白、縮小裝飾插圖，保留放大字級。1200 px 英文畫面高度減少約 42%；三語與手機排版均已檢查。

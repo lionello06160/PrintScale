@@ -5,7 +5,7 @@ Test date: 2026-10-29, Asia/Taipei.
 ## Automated checks
 
 - TypeScript strict build and Vite production build pass.
-- Vitest: **62/62 tests passed**, covering the geometry engine and actual serialized PDFs.
+- Vitest: **64/64 tests passed**, covering the geometry engine and actual serialized PDFs.
 - Stock paper sweep: six sizes × three alignments × four overlap values × three poster sizes × two directions. Trim areas partition the finished poster exactly; both modes retain requested dimensions.
 - The PDF verifier rejects a changed CropBox and a changed image-size expectation. It inspects decoded content streams and does not trust app metadata.
 - Dependency audit: no known vulnerabilities after updating PDF.js and Vitest.
@@ -102,3 +102,11 @@ Inputs are capped at 40 MB, 40 megapixels and a 16,000 px edge; layouts at 200 p
 - At a 1200 px viewport in English, hero height decreases from 404.47 to 234.70 px (about 42%). The title remains 42 px and introductory copy 16 px.
 - Chromium checks in all three languages at 320, 390, 768, 1024, 1200 and 1440 px show no horizontal page overflow. Desktop and mobile screenshots were visually reviewed. Production build passes.
 - This is a CSS-only adjustment; PDF geometry, export code, controls and image processing are unchanged. Evidence is under ignored `output/compact-hero/`.
+
+## Calibration unit consistency (v1.0.3)
+
+- The finished-size unit now drives the ruler illustration, localized download text, PDF labels/ticks, measurement inputs, range messages, formula, calibration paper/summary and corrected assembly guide. The reference axes remain exactly 100 mm in every unit.
+- Two new serialized-PDF tests verify cm/in labels on A5, native 1/16-inch tick placement, unchanged physical paper boxes and uncompensated axes. Total: 64 tests.
+- Browser checks save 9.8/10.2 cm as canonical 98/102 mm, switch through in/mm/cm/in without modifying persisted profiles or factors, restore the profile after reload, and save exact equivalent inch measurements as 100/100 mm with 100% factors. Invalid inch measurements block Save and show an inch range.
+- All three languages × mm/cm/in × 320/390/768/1440 px have no horizontal overflow, clipped ruler/buttons or raw translation tokens. No browser errors or warnings. Existing local profile schema is preserved.
+- pypdf independently verifies browser-downloaded cm/in reference labels, exact 100 mm X/Y lines, A4 boxes and an additional A5 inch artifact. Rendered PDFs were visually checked, including endpoint labels that avoid the axis/border lines. The standard poster remains four A4 pages; the simulated 98/102 mm correction remains six A4 pages; the corrected guide uses cm measurements. Artifacts: ignored `output/calibration-units/`.

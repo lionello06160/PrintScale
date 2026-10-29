@@ -170,6 +170,27 @@ describe("calibrated tiling", () => {
   });
 });
 describe("calibration PDF artifacts", () => {
+  it.each(["cm", "in"] as const)("labels the %s ruler in the selected unit without changing its physical reference", async (unit) => {
+    const paper = { width: 148, height: 210, margin: 15 };
+    const bytes = await calibrationSheet(paper, unit);
+    await expect(verifyCalibrationSheet(bytes, paper)).resolves.toBeUndefined();
+    const doc = await PDFDocument.load(bytes), text = stream(doc);
+    const words = [...text.matchAll(/<([0-9A-Fa-f]+)> Tj/g)]
+      .map((m) => Buffer.from(m[1], "hex").toString("latin1")).join("\n");
+    const endpoint = unit === "cm" ? "10 cm" : "~3.93700787 in";
+    expect(words).toContain(`X - ${endpoint}`);
+    expect(words).toContain(`Y - ${endpoint}`);
+    expect(doc.getPage(0).getWidth() / PT).toBe(148);
+    expect(doc.getPage(0).getHeight() / PT).toBe(210);
+    if (unit === "in") {
+      // Verify a real 1/16-inch tick rather than merely relabelling mm ticks.
+      const x = (paper.width - 100) / 2, y = (paper.height - 100) / 2;
+      const spans = [...text.matchAll(/([-+\d.eE]+) ([-+\d.eE]+) m\s*([-+\d.eE]+) ([-+\d.eE]+) l/g)]
+        .map((m) => m.slice(1).map((n) => Number(n) / PT));
+      expect(spans.some((v) => v.every((n,i) => Math.abs(n-[x+25.4/16,y,x+25.4/16,y+0.8][i])<1e-8))).toBe(true);
+      expect(words).toContain("1/16 in ticks; final tick is exact 100 mm.");
+    }
+  });
   it("exports an uncompensated 100 mm X and Y ruler on exact A4", async () => {
     const paper = { width: 210, height: 297, margin: 15 },
       bytes = await calibrationSheet(paper);

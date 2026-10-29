@@ -8,6 +8,8 @@ export default function Numeric({
   max,
   step = "any",
   id,
+  disabled = false,
+  precision = 4,
 }: {
   label: string;
   value: number;
@@ -17,6 +19,8 @@ export default function Numeric({
   max?: number;
   step?: string;
   id?: string;
+  disabled?: boolean;
+  precision?: number;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
   return (
@@ -30,12 +34,13 @@ export default function Numeric({
           min={min}
           max={max}
           step={step}
+          disabled={disabled}
           value={
-            draft ?? (Number.isFinite(value) ? Number(value.toFixed(4)) : "")
+            draft ?? (Number.isFinite(value) ? Number(value.toFixed(precision)) : "")
           }
           onFocus={() =>
             setDraft(
-              Number.isFinite(value) ? String(Number(value.toFixed(4))) : "",
+              Number.isFinite(value) ? String(Number(value.toFixed(precision))) : "",
             )
           }
           onChange={(e) => {

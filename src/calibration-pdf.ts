@@ -7,13 +7,17 @@ import {
   decodePDFRawStream,
   degrees,
 } from "pdf-lib";
-import { PT } from "./geometry";
+import { PT, fmt, fromMm } from "./geometry";
+import type { Unit } from "./geometry";
 import { checkTestPaper } from "./calibration";
 import type { TestPaper } from "./calibration";
-export async function calibrationSheet(p: TestPaper): Promise<Uint8Array> {
+export async function calibrationSheet(p: TestPaper, unit: Unit = "mm"): Promise<Uint8Array> {
   checkTestPaper(p);
+  const length = (mm: number) => fmt(fromMm(mm, unit), unit === "in" ? 8 : 4),
+    endpoint = length(100),
+    rulerLabel = `${unit === "in" ? "~" : ""}${endpoint} ${unit}`;
   const pdf = await PDFDocument.create();
-  pdf.setTitle("PrintScale | UNCOMPENSATED 100 mm calibration ruler");
+  pdf.setTitle(`PrintScale | UNCOMPENSATED ${rulerLabel} calibration ruler`);
   pdf.setCreator("PrintScale");
   pdf.setSubject(
     "UNCOMPENSATED reference. Actual size / 100%. Measure X and Y separately.",
@@ -63,7 +67,7 @@ export async function calibrationSheet(p: TestPaper): Promise<Uint8Array> {
     true,
   );
   label(
-    `${p.width} x ${p.height} mm | UNCOMPENSATED | Print at 100%`,
+    `${length(p.width)} x ${length(p.height)} ${unit} | UNCOMPENSATED | Print at 100%`,
     p.margin,
     p.height - p.margin - 9,
     7,
@@ -78,20 +82,33 @@ export async function calibrationSheet(p: TestPaper): Promise<Uint8Array> {
   });
   line(x, y, x + 100, y, 0.9);
   line(x, y, x, y + 100, 0.9);
-  for (let i = 0; i <= 100; i++) {
-    const major = i % 10 === 0,
-      length = major ? 2 : i % 5 === 0 ? 1.5 : 0.8;
-    line(x + i, y, x + i, y + length, 0.3);
-    line(x, y + i, x + length, y + i, 0.3);
+  // Inch ticks are native 1/16-inch intervals; mm/cm ticks share 1 mm spacing.
+  const step = unit === "in" ? 25.4 / 16 : 1;
+  for (let i = 0; i * step <= 100 + 1e-8; i++) {
+    const mm = i * step,
+      major = i % (unit === "in" ? 16 : 10) === 0,
+      tick = major ? 2 : i % (unit === "in" ? 8 : 5) === 0 ? 1.5 : 0.8;
+    line(x + mm, y, x + mm, y + tick, 0.3);
+    line(x, y + mm, x + tick, y + mm, 0.3);
     if (major) {
-      label(String(i), x + i - (i === 100 ? 2.7 : 1.3), y - 3.6, 6);
-      label(String(i), x - 5, y + i - 0.7, 6);
+      const text = length(mm);
+      label(text, x + mm - font.widthOfTextAtSize(text, 6) / PT / 2, y - 3.6, 6);
+      if (mm > 0)
+        label(text, x + 3.5, y + mm + (mm === 100 ? 1.2 : -0.7), 6);
     }
   }
-  label("X - 100 mm", x + 35, y - 8, 9, true);
-  page.drawText("Y - 100 mm", {
-    x: (x - 7) * PT,
-    y: (y + 35) * PT,
+  if (unit === "in") {
+    // The exact 100 mm endpoint is additional to the regular inch ticks.
+    line(x + 100, y, x + 100, y + 2, 0.3);
+    line(x, y + 100, x + 2, y + 100, 0.3);
+    label(endpoint, x + 100 - font.widthOfTextAtSize(endpoint, 6) / PT / 2, y - 3.6, 6);
+    label(endpoint, x + 3.5, y + 101.2, 6);
+  }
+  const xLabel = `X - ${rulerLabel}`, yLabel = `Y - ${rulerLabel}`;
+  label(xLabel, x + 50 - bold.widthOfTextAtSize(xLabel, 9) / PT / 2, y - 8, 9, true);
+  page.drawText(yLabel, {
+    x: (x + 12) * PT,
+    y: (y + 50) * PT - bold.widthOfTextAtSize(yLabel, 9) / 2,
     size: 9,
     font: bold,
     color: ink,
@@ -106,7 +123,9 @@ export async function calibrationSheet(p: TestPaper): Promise<Uint8Array> {
     borderColor: light,
     borderWidth: 0.5,
   });
-  label("Measure from 0 to 100 on each axis.", x + 10, y + 65, 7);
+  label(`Measure from 0 to ${rulerLabel} on each axis.`, x + 19, y + 65, 7);
+  if (unit === "in")
+    label("1/16 in ticks; final tick is exact 100 mm.", x + 19, y + 61, 6);
   label("Do not use Fit or borderless enlargement.", p.margin, p.margin + 6, 7);
   label(
     "Use the SAME printer, paper, orientation and print settings.",

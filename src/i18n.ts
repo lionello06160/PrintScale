@@ -70,9 +70,9 @@ const copy = {
   calTitle: ["印表機校正", "Printer calibration", "プリンター校正"],
   calOptional: ["選用功能", "Optional", "任意"],
   calIntro: [
-    "先列印未校正的 100 mm 測試尺，量測後儲存此印表機的補償設定。",
-    "Print the uncompensated 100 mm ruler, measure both axes, then save a correction for this printer.",
-    "未補正の100 mm定規を印刷し、両軸を測定してプリンターの補正設定を保存します。",
+    "先列印未校正的 {length} 測試尺，量測後儲存此印表機的補償設定。",
+    "Print the uncompensated {length} ruler, measure both axes, then save a correction for this printer.",
+    "未補正の{length}定規を印刷し、両軸を測定してプリンターの補正設定を保存します。",
   ],
   calSameSettings: [
     "測試尺與校正版須使用同一台印表機、紙張、方向及驅動設定，並以「實際大小／100%」列印。",
@@ -83,14 +83,14 @@ const copy = {
   calStep2: ["2. 輸入實測長度", "2. Enter measurements", "2. 実測値を入力"],
   calStep3: ["3. 下載校正版", "3. Export corrected PDF", "3. 補正PDFを出力"],
   calRuler: [
-    "下載 100 mm 測試尺",
-    "Download 100 mm ruler",
-    "100 mm定規をダウンロード",
+    "下載 {length} 測試尺",
+    "Download {length} ruler",
+    "{length}定規をダウンロード",
   ],
   calUncompensated: [
-    "測試尺永遠不套用校正係數。請量測 0 到 100 刻度線的距離。",
-    "The ruler is always uncompensated. Measure the distance between the 0 and 100 ticks.",
-    "定規には補正を適用しません。0から100の目盛り間を測定してください。",
+    "測試尺永遠不套用校正係數。請量測 0 到 {length} 刻度線的距離。",
+    "The ruler is always uncompensated. Measure the distance between the 0 and {length} ticks.",
+    "定規には補正を適用しません。0から{length}の目盛り間を測定してください。",
   ],
   calReference: ["量測用紙", "Measured paper", "測定した用紙"],
   calName: [
@@ -103,9 +103,9 @@ const copy = {
   calFactorX: ["橫向補償", "X correction", "横方向の補正"],
   calFactorY: ["縱向補償", "Y correction", "縦方向の補正"],
   calFormula: [
-    "係數 = 100 ÷ 實測長度；兩個方向分別計算。",
-    "Factor = 100 / measured length, calculated separately for X and Y.",
-    "係数 = 100 ÷ 実測長。横方向と縦方向を別々に計算します。",
+    "係數 = {length} ÷ 同單位實測長度；兩個方向分別計算。",
+    "Factor = {length} / measured length in the same unit, calculated separately for X and Y.",
+    "係数 = {length} ÷ 同じ単位の実測長。横方向と縦方向を別々に計算します。",
   ],
   calSave: ["儲存並套用校正", "Save & apply calibration", "校正を保存して適用"],
   calSaved: [
@@ -121,14 +121,14 @@ const copy = {
     "この校正設定を削除",
   ],
   calMeasurementError: [
-    "兩軸實測值須介於 80–120 mm。超出時請先確認 100% 列印、紙張方向與量測方式。",
-    "Measurements must be 80–120 mm. Outside this range, first check 100% printing, paper orientation and how you measured.",
-    "両軸の実測値は80〜120 mmで入力してください。範囲外の場合は100%印刷・用紙の向き・測定方法を確認してください。",
+    "兩軸實測值須介於 {range}。超出時請先確認 100% 列印、紙張方向與量測方式。",
+    "Measurements must be {range}. Outside this range, first check 100% printing, paper orientation and how you measured.",
+    "両軸の実測値は{range}で入力してください。範囲外の場合は100%印刷・用紙の向き・測定方法を確認してください。",
   ],
   calPaperTooSmall: [
-    "可列印範圍至少需 114 × 140 mm，請調整紙張、方向或邊界。",
-    "The ruler needs a printable area of at least 114 × 140 mm. Change paper, orientation or margins.",
-    "定規には114 × 140 mm以上の印刷可能範囲が必要です。用紙・向き・余白を調整してください。",
+    "可列印範圍至少需 {area}，請調整紙張、方向或邊界。",
+    "The ruler needs a printable area of at least {area}. Change paper, orientation or margins.",
+    "定規には{area}以上の印刷可能範囲が必要です。用紙・向き・余白を調整してください。",
   ],
   calPaperMismatch: [
     "目前紙張或指定方向與量測設定不同。請恢復原設定，或下載新的測試尺重新量測。",

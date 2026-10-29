@@ -1309,6 +1309,7 @@ export default function App() {
         <Suspense fallback={null}>
           <CalibrationPanel
             settings={settings}
+            unit={unit}
             standardPlan={plan}
             image={imageReady ? processed : undefined}
             options={exportOptions}

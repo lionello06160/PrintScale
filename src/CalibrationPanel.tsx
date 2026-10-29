@@ -21,16 +21,18 @@ import {
 } from "./calibration";
 import type { Calibration, CalibrationStore } from "./calibration";
 import { checkTestPaper } from "./calibration";
-import { fmt } from "./geometry";
-import type { Settings, Plan } from "./geometry";
+import { fmt, fromMm, toMm } from "./geometry";
+import type { Settings, Plan, Unit } from "./geometry";
 import type { ProcessedImage } from "./image";
 import type { ExportOptions, PdfResult } from "./pdf";
 import { translate } from "./i18n";
 import type { CopyKey, Language } from "./i18n";
 import AssemblyMap from "./AssemblyMap";
+import Numeric from "./Numeric";
 const PdfPreview = lazy(() => import("./PdfPreview"));
 interface Props {
   settings: Settings;
+  unit: Unit;
   standardPlan?: Plan;
   image?: ProcessedImage;
   options: ExportOptions;
@@ -66,13 +68,20 @@ const geometryErrors: Record<string, CopyKey> = {
 };
 export default function CalibrationPanel({
   settings,
+  unit,
   standardPlan,
   image,
   options,
   language,
 }: Props) {
-  const t = translate(language),
-    [saved, setSaved] = useState(readSaved);
+  const length = (mm: number) => fmt(fromMm(mm, unit), unit === "in" ? 8 : 4);
+  const referenceLength = `${unit === "in" ? "≈ " : ""}${length(100)} ${unit}`;
+  const copy = translate(language);
+  const t = (key: CopyKey) => copy(key)
+    .replaceAll("{length}", referenceLength)
+    .replaceAll("{range}", `${length(80)}–${length(120)} ${unit}`)
+    .replaceAll("{area}", `${length(114)} × ${length(140)} ${unit}`);
+  const [saved, setSaved] = useState(readSaved);
   const initial = saved.profiles.find((p) => p.id === saved.activeId);
   const [active, setActive] = useState<Calibration | undefined>(initial),
     [name, setName] = useState(initial?.name ?? ""),
@@ -181,10 +190,10 @@ export default function CalibrationPanel({
     setMessage(undefined);
     try {
       const { calibrationSheet } = await import("./calibration-pdf");
-      const bytes = await calibrationSheet(testPaper);
+      const bytes = await calibrationSheet(testPaper, unit);
       download(
         bytes,
-        `PrintScale-calibration-${fmt(testPaper.width)}x${fmt(testPaper.height)}mm-100mm.pdf`,
+        `PrintScale-calibration-${length(testPaper.width)}x${length(testPaper.height)}${unit}-${length(100)}${unit}.pdf`,
       );
       setReference({ width: testPaper.width, height: testPaper.height });
       setX("");
@@ -262,7 +271,7 @@ export default function CalibrationPanel({
     if (!active || !plan) return;
     download(
       new TextEncoder().encode(
-        `PrintScale | ${t("calApplied")}\n${active.name}\n${t("size")}: ${fmt(plan.width)} x ${fmt(plan.height)} mm\n${t("outputPage")}: ${fmt(plan.paperWidth)} x ${fmt(plan.paperHeight)} mm\n${plan.cols} x ${plan.rows} = ${plan.pages} ${t("sheets")}\n${t("calMeasured")}: X ${active.measuredX} mm / Y ${active.measuredY} mm\nX ${(10000 / active.measuredX).toFixed(4)}% / Y ${(10000 / active.measuredY).toFixed(4)}%\n${t("margin")}: ${plan.margin} mm | ${t("overlap")}: ${plan.overlap} mm\n\n${Array.from(
+        `PrintScale | ${t("calApplied")}\n${active.name}\n${t("size")}: ${length(plan.width)} x ${length(plan.height)} ${unit}\n${t("outputPage")}: ${length(plan.paperWidth)} x ${length(plan.paperHeight)} ${unit}\n${plan.cols} x ${plan.rows} = ${plan.pages} ${t("sheets")}\n${t("calMeasured")}: X ${length(active.measuredX)} ${unit} / Y ${length(active.measuredY)} ${unit}\nX ${(10000 / active.measuredX).toFixed(4)}% / Y ${(10000 / active.measuredY).toFixed(4)}%\n${t("margin")}: ${length(plan.margin)} ${unit} | ${t("overlap")}: ${length(plan.overlap)} ${unit}\n\n${Array.from(
           { length: plan.rows },
           (_, r) =>
             plan.tiles
@@ -301,10 +310,10 @@ export default function CalibrationPanel({
           <div className="ruler-illustration" aria-hidden="true">
             <span>0</span>
             <i />
-            <span>100 mm</span>
+            <span>{referenceLength}</span>
           </div>
           <p>
-            {fmt(testPaper.width)} × {fmt(testPaper.height)} mm ·{" "}
+            {length(testPaper.width)} × {length(testPaper.height)} {unit} ·{" "}
             {t(orientation)}
           </p>
           <button
@@ -339,7 +348,7 @@ export default function CalibrationPanel({
                   <option value="">{t("calNone")}</option>
                   {saved.profiles.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name} · {fmt(p.paperWidth)} × {fmt(p.paperHeight)} mm
+                      {p.name} · {length(p.paperWidth)} × {length(p.paperHeight)} {unit}
                     </option>
                   ))}
                 </select>
@@ -367,28 +376,23 @@ export default function CalibrationPanel({
               { label: "calMeasuredX" as const, value: x, set: setX },
               { label: "calMeasuredY" as const, value: y, set: setY },
             ].map((field) => (
-              <label className="field" key={field.label}>
-                {t(field.label)}
-                <span className="input-wrap">
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    min={80}
-                    max={120}
-                    step="any"
-                    value={field.value}
-                    disabled={!reference}
-                    onChange={(e) => field.set(e.target.value)}
-                  />
-                  <span>mm</span>
-                </span>
-              </label>
+              <Numeric
+                key={`${field.label}-${unit}`}
+                label={t(field.label)}
+                value={field.value === "" ? NaN : fromMm(Number(field.value), unit)}
+                min={fromMm(80, unit)}
+                max={fromMm(120, unit)}
+                suffix={unit}
+                precision={8}
+                disabled={!reference}
+                onChange={(n) => field.set(Number.isFinite(n) ? String(toMm(n, unit)) : "")}
+              />
             ))}
           </div>
           {reference ? (
             <p className="help">
-              {t("calReference")}: {fmt(reference.width)} ×{" "}
-              {fmt(reference.height)} mm
+              {t("calReference")}: {length(reference.width)} ×{" "}
+              {length(reference.height)} {unit}
             </p>
           ) : (
             <p className="help">{t("calNeedRuler")}</p>
@@ -447,11 +451,11 @@ export default function CalibrationPanel({
                 </strong>
                 <span>
                   {plan
-                    ? `${fmt(plan.paperWidth)} × ${fmt(plan.paperHeight)} mm · ${t(plan.orientation)}`
+                    ? `${length(plan.paperWidth)} × ${length(plan.paperHeight)} ${unit} · ${t(plan.orientation)}`
                     : ""}
                 </span>
                 <span>
-                  {t("size")}: {fmt(settings.width)} × {fmt(settings.height)} mm
+                  {t("size")}: {length(settings.width)} × {length(settings.height)} {unit}
                 </span>
               </div>
               {layout.error && (
